@@ -27,7 +27,7 @@
         input:focus { border-color: var(--accent); }
 
         /* Navigation Farbcodes */
-        .tab-btn { transition: all 0.2s; border-bottom: 3px solid transparent; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.65rem; padding: 1rem 0.75rem; white-space: nowrap; opacity: 0.6; }
+        .tab-btn { transition: all 0.2s; border-bottom: 3px solid transparent; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.6rem; padding: 1rem 0.6rem; white-space: nowrap; opacity: 0.6; }
         .tab-btn:hover { opacity: 1; color: #f8fafc; }
         .tab-btn.active { opacity: 1; border-bottom-width: 4px; }
 
@@ -39,10 +39,12 @@
         #tab-scale.active { border-color: #a855f7; color: #a855f7; }
         #tab-explorer.active { border-color: #f97316; color: #f97316; }
         #tab-quiet.active { border-color: #2dd4bf; color: #2dd4bf; }
+        #tab-layout.active { border-color: #ec4899; color: #ec4899; }
         #tab-glass.active { border-color: #0ea5e9; color: #0ea5e9; }
         #tab-grad.active { border-color: #f59e0b; color: #f59e0b; }
         #tab-typo.active { border-color: #d946ef; color: #d946ef; }
         #tab-shadow.active { border-color: #94a3b8; color: #94a3b8; }
+        #tab-access.active { border-color: #6366f1; color: #6366f1; }
 
         .code-block { background: #0a0f1e; border-radius: 1rem; padding: 1.5rem; font-family: 'Fira Code', monospace; font-size: 0.8rem; border: 1px solid #1e293b; position: relative; overflow-x: auto; color: #94a3b8; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
         .copy-btn { position: absolute; top: 1rem; right: 1rem; background: #334155; padding: 0.4rem 0.8rem; border-radius: 0.5rem; font-size: 0.65rem; cursor: pointer; color: #cbd5e1; font-weight: bold; transition: 0.2s; }
@@ -57,9 +59,22 @@
 
         .preview-area { background: #0f172a; border: 1px dashed #334155; border-radius: 1.25rem; position: relative; overflow: hidden; }
         .label-hint { font-size: 10px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; display: block; }
+        
+        /* Accessibility Filters */
+        .filter-protanopia { filter: url('#protanopia'); }
+        .filter-deuteranopia { filter: url('#deuteranopia'); }
+        .filter-tritanopia { filter: url('#tritanopia'); }
+        .filter-achromatopsia { filter: grayscale(1); }
     </style>
 </head>
 <body class="p-4 md:p-12 flex flex-col items-center">
+
+    <!-- SVG Filters for Color Blindness -->
+    <svg style="display:none">
+        <filter id="protanopia"><feColorMatrix values="0.567, 0.433, 0, 0, 0, 0.558, 0.442, 0, 0, 0, 0, 0.242, 0.758, 0, 0, 0, 0, 0, 1, 0"/></filter>
+        <filter id="deuteranopia"><feColorMatrix values="0.625, 0.375, 0, 0, 0, 0.7, 0.3, 0, 0, 0, 0, 0.3, 0.7, 0, 0, 0, 0, 0, 1, 0"/></filter>
+        <filter id="tritanopia"><feColorMatrix values="0.95, 0.05, 0, 0, 0, 0, 0.433, 0.567, 0, 0, 0, 0.475, 0.525, 0, 0, 0, 0, 0, 1, 0"/></filter>
+    </svg>
 
     <div class="max-w-7xl w-full">
         <header class="mb-12 text-center text-white">
@@ -79,11 +94,13 @@
                 <button onclick="showTab('semantic')" id="tab-semantic" class="tab-btn">Semantics</button>
                 <button onclick="showTab('scale')" id="tab-scale" class="tab-btn">Scale Pro</button>
                 <button onclick="showTab('explorer')" id="tab-explorer" class="tab-btn">Explorer</button>
+                <button onclick="showTab('layout')" id="tab-layout" class="tab-btn">Layout</button>
                 <button onclick="showTab('quiet')" id="tab-quiet" class="tab-btn">Theme</button>
                 <button onclick="showTab('glass')" id="tab-glass" class="tab-btn">Glass</button>
                 <button onclick="showTab('grad')" id="tab-grad" class="tab-btn">Gradient</button>
-                <button onclick="showTab('typo')" id="tab-typo" class="tab-btn">Typo Scale</button>
-                <button onclick="showTab('shadow')" id="tab-shadow" class="tab-btn">Shadow Pro</button>
+                <button onclick="showTab('typo')" id="tab-typo" class="tab-btn">Typo</button>
+                <button onclick="showTab('shadow')" id="tab-shadow" class="tab-btn">Shadow</button>
+                <button onclick="showTab('access')" id="tab-access" class="tab-btn">Access</button>
             </nav>
         </div>
 
@@ -133,33 +150,20 @@
                         <h2 class="text-xl font-bold flex items-center gap-2"><span class="text-yellow-400">⚡</span> Dynamic Shift</h2>
                         <div class="p-4 bg-slate-900/50 rounded-xl border border-slate-700 space-y-4">
                             <span class="label-hint text-yellow-500">1. Kalibrierung</span>
-                            <div class="grid grid-cols-2 gap-3">
-                                <input type="color" id="shiftRefBase" value="#3b82f6" oninput="updateShift();">
-                                <input type="color" id="shiftRefTarget" value="#0044ff" oninput="updateShift();">
-                            </div>
+                            <div class="grid grid-cols-2 gap-3"><input type="color" id="shiftRefBase" value="#3b82f6" oninput="updateShift();"><input type="color" id="shiftRefTarget" value="#0044ff" oninput="updateShift();"></div>
                         </div>
-                        <div class="p-4 bg-blue-600/10 rounded-xl border border-blue-500/20">
-                            <span class="label-hint">2. Stress-Test</span>
-                            <input type="color" id="shiftSimBase" value="#3b82f6" oninput="updateShift();">
-                        </div>
+                        <div class="p-4 bg-blue-600/10 rounded-xl border border-blue-500/20"><span class="label-hint">2. Stress-Test</span><input type="color" id="shiftSimBase" value="#3b82f6" oninput="updateShift();"></div>
                     </div>
                     <div class="lg:col-span-8 preview-area p-8">
-                        <span class="label-hint mb-6">Sidebar Simulation</span>
                         <div class="grid md:grid-cols-2 gap-8 h-full">
-                            <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-700 flex flex-col justify-center gap-6">
+                            <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-700 flex flex-col justify-center gap-6 shadow-2xl">
                                 <span id="menuLabel1" class="text-[11px] font-black uppercase transition-all duration-300">Projekt Management</span>
                                 <span id="menuLabel2" class="text-[11px] font-black uppercase transition-all duration-300">Team Kommunikation</span>
-                                <div class="flex gap-2"><div id="activeDot" class="w-8 h-2 rounded-full transition-all"></div></div>
+                                <div id="activeDot" class="w-8 h-2 rounded-full transition-all"></div>
                             </div>
                             <div class="flex flex-col justify-center gap-4">
-                                <div class="p-4 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-between">
-                                    <span class="label-hint">Current Base</span>
-                                    <div id="simBaseIndicator" class="w-10 h-10 rounded shadow-inner"></div>
-                                </div>
-                                <div class="p-4 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-between">
-                                    <span class="label-hint">Calc Target</span>
-                                    <div id="simTargetIndicator" class="w-10 h-10 rounded shadow-lg"></div>
-                                </div>
+                                <div class="p-4 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-between"><span class="label-hint">Base</span><div id="simBaseIndicator" class="w-10 h-10 rounded"></div></div>
+                                <div class="p-4 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-between"><span class="label-hint">Shift</span><div id="simTargetIndicator" class="w-10 h-10 rounded"></div></div>
                             </div>
                         </div>
                     </div>
@@ -171,27 +175,22 @@
             <div id="panel-contrast" class="tab-panel hidden space-y-8">
                 <div class="grid lg:grid-cols-12 gap-8">
                     <div class="lg:col-span-4 card p-8 space-y-6">
-                        <h2 class="text-xl font-bold flex items-center gap-2"><span class="text-indigo-400">👁️</span> Contrast Analyzer</h2>
-                        <div>
-                            <span class="label-hint">Hintergrund</span>
-                            <input type="color" id="conBgColor" value="#3b82f6" oninput="updateContrast();">
-                        </div>
+                        <h2 class="text-xl font-bold flex items-center gap-2"><span class="text-indigo-400">👁️</span> Contrast</h2>
+                        <div><span class="label-hint">Hintergrund</span><input type="color" id="conBgColor" value="#3b82f6" oninput="updateContrast();"></div>
                         <div class="grid grid-cols-2 gap-4">
                             <div><span class="label-hint">Dark Text</span><input type="color" id="conDarkText" value="#0f172a" oninput="updateContrast();"></div>
                             <div><span class="label-hint">Light Text</span><input type="color" id="conLightText" value="#f8fafc" oninput="updateContrast();"></div>
                         </div>
                     </div>
-                    <div id="conPreview" class="lg:col-span-8 preview-area flex flex-col items-center justify-center p-12 transition-all">
-                        <h3 id="conPreviewText" class="text-5xl font-black mb-4 uppercase tracking-tighter">Vorschau</h3>
-                        <div class="flex items-center gap-3">
-                            <p id="ratioRes" class="text-2xl font-mono font-black"></p>
-                            <div id="wcagBadge" class="px-4 py-1 rounded-full text-[10px] font-black uppercase">Checking...</div>
-                        </div>
+                    <div id="conPreview" class="lg:col-span-8 preview-area flex flex-col items-center justify-center p-12">
+                        <h3 id="conPreviewText" class="text-5xl font-black mb-4 uppercase italic">Vorschau</h3>
+                        <p id="ratioRes" class="text-2xl font-black"></p>
+                        <div id="wcagBadge" class="mt-4 px-6 py-1 rounded-full text-[10px] font-black text-white uppercase">Checking...</div>
                     </div>
                 </div>
-                <div class="code-block flex items-center justify-center gap-12 py-8">
-                   <div class="text-center"><span class="label-hint mb-2">WCAG AA</span><div id="aaStatus" class="text-2xl font-black">?</div></div>
-                   <div class="text-center"><span class="label-hint mb-2">WCAG AAA</span><div id="aaaStatus" class="text-2xl font-black">?</div></div>
+                <div class="code-block flex justify-around py-8 text-center">
+                   <div><span class="label-hint">WCAG AA</span><div id="aaStatus" class="text-2xl">?</div></div>
+                   <div><span class="label-hint">WCAG AAA</span><div id="aaaStatus" class="text-2xl">?</div></div>
                 </div>
             </div>
 
@@ -199,14 +198,14 @@
             <div id="panel-rule" class="tab-panel hidden space-y-8">
                 <div class="grid lg:grid-cols-12 gap-8">
                     <div class="lg:col-span-4 card p-8 space-y-6">
-                        <h2 class="text-xl font-bold flex items-center gap-2"><span class="text-emerald-400">📐</span> Harmony Rule</h2>
+                        <h2 class="text-xl font-bold flex items-center gap-2"><span class="text-emerald-400">📐</span> Harmony Rule - 60-30-10</h2>
                         <div class="flex p-1 bg-slate-900 rounded-xl border border-slate-700">
                             <button onclick="setRuleMode('light')" id="rule-l" class="flex-1 py-2 text-[9px] font-black rounded-lg uppercase">Light Theme</button>
                             <button onclick="setRuleMode('dark')" id="rule-d" class="flex-1 py-2 text-[9px] font-black rounded-lg uppercase ml-1 bg-blue-600">Dark Theme</button>
                         </div>
                         <div>
                             <span class="label-hint">Akzentfarbe</span>
-                            <input type="color" id="ruleAccent" value="#3b82f6" oninput="updateRule();">
+                        <input type="color" id="ruleAccent" value="#3b82f6" oninput="updateRule();">
                         </div>
                     </div>
                     <div class="lg:col-span-8 preview-area p-8 flex flex-col justify-center">
@@ -276,10 +275,39 @@
                             <input type="color" id="expBase" value="#0f172a" oninput="updateExplorer();">
                         </div>
                     </div>
-                    <div class="lg:col-span-8 preview-area p-8 space-y-4 max-h-[450px] overflow-y-auto no-scrollbar" id="expResults">
+                    <div class="lg:col-span-8 preview-area p-8 space-y-4 max-h-[550px] overflow-y-auto no-scrollbar" id="expResults">
                         <!-- Hier kommen die Karten rein -->
                     </div>
                 </div>
+            </div>
+            
+
+            <!-- 8. LAYOUT PRO (NEU) -->
+            <div id="panel-layout" class="tab-panel hidden space-y-8">
+                <div class="grid lg:grid-cols-12 gap-8">
+                    <div class="lg:col-span-4 card p-8 space-y-6">
+                        <h2 class="text-xl font-bold flex items-center gap-2"><span class="text-pink-400">📏</span> Layout Pro</h2>
+                        <div><span class="label-hint">Scale Factor (px)</span><input type="number" id="layoutScale" value="8" min="2" max="16" oninput="updateLayout();"></div>
+                        <div><span class="label-hint">Base Radius</span><input type="range" id="layoutRadius" min="0" max="32" value="12" oninput="updateLayout();" class="custom-range"></div>
+                    </div>
+                    <div class="lg:col-span-8 preview-area p-8 grid grid-cols-2 gap-8">
+                        <div id="layoutBox1" class="border border-slate-700 flex flex-col gap-4 p-4">
+                            <span class="label-hint">Container Scale</span>
+                            <div class="bg-blue-500/20 h-full w-full border border-blue-500/40 transition-all"></div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="bg-slate-800 p-4 border border-slate-700 flex items-center gap-4 transition-all" id="layoutItem1">
+                                <div class="w-8 h-8 bg-blue-500 shrink-0"></div>
+                                <div class="h-2 w-full bg-slate-600 rounded"></div>
+                            </div>
+                            <div class="bg-slate-800 p-4 border border-slate-700 flex items-center gap-4 transition-all" id="layoutItem2">
+                                <div class="w-8 h-8 bg-emerald-500 shrink-0"></div>
+                                <div class="h-2 w-full bg-slate-600 rounded"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-block"><button class="copy-btn" onclick="copyContent(event, 'layoutOutput')">Copy</button><pre id="layoutOutput"></pre></div>
             </div>
 
             <!-- 8. THEME ARCHITECT -->
@@ -343,7 +371,7 @@
                         <div class="flex items-center gap-2"><input type="checkbox" id="gradSoft" onchange="updateGradient();" class="w-4 h-4"><label class="text-[10px] font-black uppercase text-slate-500">Soft Transition</label></div>
                     </div>
                     <div id="gradPreview" class="lg:col-span-8 preview-area h-[350px] shadow-2xl transition-all flex items-center justify-center">
-                        <span class="text-white font-black text-4xl uppercase tracking-widest opacity-20">Preview</span>
+                        <span class="text-white font-black text-4xl uppercase tracking-widest opacity-20"><!---Preview--></span>
                     </div>
                 </div>
                 <div class="code-block"><button class="copy-btn" onclick="copyContent(event, 'gradOutput')">Copy</button><pre id="gradOutput"></pre></div>
@@ -389,8 +417,41 @@
                 <div class="code-block"><button class="copy-btn" onclick="copyContent(event, 'shadOutput')">Copy</button><pre id="shadOutput"></pre></div>
             </div>
 
-        </div>
-    </div>
+
+
+            <!-- 14. ACCESSIBILITY (NEU) -->
+            <div id="panel-access" class="tab-panel hidden space-y-8">
+                <div class="grid lg:grid-cols-12 gap-8">
+                    <div class="lg:col-span-4 card p-8 space-y-6">
+                        <h2 class="text-xl font-bold flex items-center gap-2"><span class="text-indigo-500">♿</span> Accessibility</h2>
+                        <div><span class="label-hint">Prüffarbe</span><input type="color" id="accessColor" value="#3b82f6" oninput="updateAccess();"></div>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 p-3 bg-slate-900 rounded-xl cursor-pointer hover:bg-slate-800 transition-all">
+                                <input type="radio" name="vision" value="normal" checked onchange="updateAccess();"> <span class="text-xs">Normal Vision</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-3 bg-slate-900 rounded-xl cursor-pointer hover:bg-slate-800 transition-all">
+                                <input type="radio" name="vision" value="protanopia" onchange="updateAccess();"> <span class="text-xs">Protanopia (No Red)</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-3 bg-slate-900 rounded-xl cursor-pointer hover:bg-slate-800 transition-all">
+                                <input type="radio" name="vision" value="deuteranopia" onchange="updateAccess();"> <span class="text-xs">Deuteranopia (No Green)</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-3 bg-slate-900 rounded-xl cursor-pointer hover:bg-slate-800 transition-all">
+                                <input type="radio" name="vision" value="achromatopsia" onchange="updateAccess();"> <span class="text-xs">Achromatopsia</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-8 preview-area p-8 flex flex-col items-center justify-center">
+                        <div id="accessPreview" class="grid grid-cols-2 gap-4 w-full max-w-md">
+                            <div class="h-32 rounded-3xl shadow-xl flex items-center justify-center font-black" style="background:#3b82f6">UI</div>
+                            <div class="h-32 rounded-3xl shadow-xl flex items-center justify-center font-black" style="background:#ef4444">ERROR</div>
+                            <div class="h-32 rounded-3xl shadow-xl flex items-center justify-center font-black" style="background:#10b981">SUCCESS</div>
+                            <div class="h-32 rounded-3xl shadow-xl flex items-center justify-center font-black" style="background:#f59e0b">WARN</div>
+                        </div>
+                        <p class="mt-6 text-[10px] text-slate-500 uppercase font-black tracking-widest italic">Simulation der Farbwahrnehmung</p>
+                    </div>
+                </div>
+            </div>
+
 
     <script>
         // --- GLOBALS ---
@@ -456,6 +517,7 @@
             document.getElementById('shiftOutput').innerText = `$menu-header: adjust-color($primary-base, $hue: ${delta.h.toFixed(1)}deg, $saturation: ${delta.s.toFixed(1)}%, $lightness: ${delta.l.toFixed(1)}%);`;
         }
 
+        function setMixMode(m) { mixMode = m; document.getElementById('mix-mode-bw').classList.toggle('bg-blue-600', m==='bw'); document.getElementById('mix-mode-auto').classList.toggle('bg-blue-600', m==='auto'); updateMix(); }
         function updateMix() {
             const bR = safeHexToRgb(document.getElementById('mixBaseColor').value), tR = safeHexToRgb(document.getElementById('mixTargetColor').value);
             const vis = document.getElementById('mixVisualRecipe'); vis.innerHTML = ''; let scss = '';
@@ -487,12 +549,27 @@
             const r = getContrast(bg, isL ? safeHexToRgb(darkH) : safeHexToRgb(lightH)).toFixed(2);
             document.getElementById('conPreview').style.backgroundColor = bgH; document.getElementById('conPreviewText').style.color = isL ? darkH : lightH;
             document.getElementById('ratioRes').innerText = `${r} : 1`;
-            const b = document.getElementById('wcagBadge'); b.innerText = r >= 4.5 ? (r >= 7 ? "WCAG AAA" : "WCAG AA") : "Fail";
+            const b = document.getElementById('wcagBadge'); b.innerText = r >= 4.5 ? (r >= 7 ? "WCAG AAA" : "WCAG AA") : "FAIL";
             b.style.backgroundColor = r >= 4.5 ? (r >= 7 ? "#10b981" : "#3b82f6") : "#ef4444";
-            document.getElementById('aaStatus').innerText = r >= 4.5 ? "✅" : "❌";
-            document.getElementById('aaaStatus').innerText = r >= 7 ? "✅" : "❌";
+            document.getElementById('aaStatus').innerText = r >= 4.5 ? "✅" : "❌"; document.getElementById('aaaStatus').innerText = r >= 7 ? "✅" : "❌";
         }
 
+        function updateLayout() {
+            const scale = document.getElementById('layoutScale').value, rad = document.getElementById('layoutRadius').value;
+            const box = document.getElementById('layoutBox1'), i1 = document.getElementById('layoutItem1'), i2 = document.getElementById('layoutItem2');
+            box.style.padding = (scale * 2) + "px"; box.style.borderRadius = rad + "px";
+            [i1, i2].forEach(el => el.style.borderRadius = (rad/2) + "px");
+            document.getElementById('layoutOutput').innerText = `$scale: ${scale}px;\n$radius-lg: ${rad}px;\n$radius-md: ${rad/2}px;\n$padding: $scale * 2;`;
+        }
+
+        function updateAccess() {
+            const mode = document.querySelector('input[name="vision"]:checked').value;
+            const prev = document.getElementById('accessPreview');
+            prev.className = "grid grid-cols-2 gap-4 w-full max-w-md filter-" + mode;
+            if(mode === 'normal') prev.className = "grid grid-cols-2 gap-4 w-full max-w-md";
+        }
+
+        // --- CORE MODULES COPIED FROM PREVIOUS VERSION ---
         function setRuleMode(m) { ruleMode = m; updateRule(); }
         function updateRule() {
             const accH = document.getElementById('ruleAccent').value, acc = safeHexToRgb(accH);
@@ -593,19 +670,17 @@
         function showTab(id) {
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            const p = document.getElementById('panel-' + id); if(p) p.classList.remove('hidden');
-            const b = document.getElementById('tab-' + id); if(b) b.classList.add('active');
+            document.getElementById('panel-' + id).classList.remove('hidden');
+            document.getElementById('tab-' + id).classList.add('active');
         }
-
-        function setMixMode(m) { mixMode = m; document.getElementById('mix-mode-bw').classList.toggle('bg-blue-600', m==='bw'); document.getElementById('mix-mode-auto').classList.toggle('bg-blue-600', m==='auto'); updateMix(); }
 
         function copyContent(e, id) {
             const ta = document.createElement("textarea"); ta.value = document.getElementById(id).innerText; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
-            const btn = e.currentTarget; const old = btn.innerText; btn.innerText = "COPIED!"; setTimeout(()=>btn.innerText = old, 1200);
+            const btn = e.currentTarget; btn.innerText = "COPIED!"; setTimeout(()=>btn.innerText = "Copy", 1200);
         }
 
         window.onload = () => {
-            updateShift(); updateMix(); updateContrast(); updateRule(); updateSemantic(); updateScale(); updateExplorer(); updateQuiet(); updateGlass(); updateGradient(); updateTypo(); updateShadow();
+            updateShift(); updateMix(); updateContrast(); updateRule(); updateSemantic(); updateScale(); updateExplorer(); updateQuiet(); updateGlass(); updateGradient(); updateTypo(); updateShadow(); updateLayout(); updateAccess();
         };
     </script>
 </body>
