@@ -19,7 +19,7 @@
         }
 
         body { background-color: var(--app-bg); color: #f8fafc; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
-        .card { background: var(--panel-bg); border: 1px solid #334155; border-radius: 1.25rem; box-shadow: 0 20px 50px rgba(0,0,0,0.4); transition: all 0.3s ease; }
+        .card { background: var(--panel-bg); border: 1px solid #334155; border-radius: 1.25rem; box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
 
         /* Custom Inputs */
         input[type="color"] { -webkit-appearance: none; border: none; width: 100%; height: 50px; cursor: pointer; border-radius: 0.75rem; background: #334155; padding: 4px; }
@@ -27,7 +27,7 @@
         input[type="color"]::-webkit-color-swatch { border: none; border-radius: 0.5rem; }
 
         input[type="text"], input[type="number"], select { background: #0f172a; border: 1px solid #334155; padding: 0.75rem; border-radius: 0.75rem; color: white; width: 100%; text-align: center; font-family: 'Fira Code', monospace; font-size: 0.875rem; outline: none; }
-        input:focus { border-color: var(--accent); ring: 2px var(--accent); }
+        input:focus { border-color: var(--accent); }
 
         /* Tabs */
         .tab-btn { transition: all 0.2s; border-bottom: 3px solid transparent; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.7rem; padding: 1rem 0.5rem; }
@@ -41,6 +41,10 @@
         .custom-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: var(--accent); cursor: pointer; border-radius: 50%; border: 3px solid #f8fafc; }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        /* Animations */
+        .tab-panel { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="p-4 md:p-12 flex flex-col items-center">
@@ -51,7 +55,7 @@
             <h1 class="text-5xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-500 to-emerald-400">
                 COLOR ARCHITECT SUITE
             </h1>
-            <p class="text-slate-400 mt-4 text-lg font-medium">Prozedurale Farbsysteme für Perfektionisten</p>
+            <p class="text-slate-400 mt-4 text-lg font-medium">Design-Engineering für Perfektionisten</p>
         </header>
 
         <!-- Navigation -->
@@ -63,110 +67,100 @@
                 <button onclick="showTab('semantic')" id="tab-semantic" class="tab-btn">UI Semantics</button>
                 <button onclick="showTab('scale')" id="tab-scale" class="tab-btn">Scale Pro</button>
                 <button onclick="showTab('explorer')" id="tab-explorer" class="tab-btn">Explorer</button>
-                <button onclick="showTab('quiet')" id="tab-quiet" class="tab-btn text-emerald-400">Atmospheric UI</button>
+                <button onclick="showTab('quiet')" id="tab-quiet" class="tab-btn text-emerald-400">Theme Architect</button>
             </nav>
         </div>
 
         <!-- Panels -->
         <div class="space-y-10">
 
-            <!-- 1. MIX ANALYZER (Legacy Design) -->
-            <div id="panel-mix" class="tab-panel animate-in fade-in duration-500">
+            <!-- 1. MIX ANALYZER -->
+            <div id="panel-mix" class="tab-panel">
                 <div class="grid md:grid-cols-2 gap-8">
                     <div class="card p-10">
                         <h2 class="text-2xl font-bold mb-8 flex items-center"><span class="mr-3 text-blue-400">🧪</span> SCSS Mix-Calculator</h2>
                         <div class="space-y-8">
                             <div>
-                                <label class="block text-[11px] font-black uppercase text-slate-500 tracking-widest mb-3">Basisfarbe (z.B. Primary)</label>
+                                <label class="block text-[11px] font-black uppercase text-slate-500 mb-3 tracking-widest">Basisfarbe (z.B. Primary)</label>
                                 <input type="color" id="mixBaseColor" value="#3b82f6" oninput="syncHex('mixBaseColor', 'mixBaseHex'); updateMix();">
                                 <input type="text" id="mixBaseHex" value="#3b82f6" onchange="syncColor('mixBaseHex', 'mixBaseColor'); updateMix();" class="mt-3">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-black uppercase text-slate-500 tracking-widest mb-3">Ziel-Farbe (Alt-Design)</label>
+                                <label class="block text-[11px] font-black uppercase text-slate-500 mb-3 tracking-widest">Ziel-Farbe (Alt-Design)</label>
                                 <input type="color" id="mixTargetColor" value="#1d4ed8" oninput="syncHex('mixTargetColor', 'mixTargetHex'); updateMix();">
                                 <input type="text" id="mixTargetHex" value="#1d4ed8" onchange="syncColor('mixTargetHex', 'mixTargetColor'); updateMix();" class="mt-3">
                             </div>
                         </div>
                     </div>
                     <div class="card p-10 bg-slate-900/40 border-dashed border-slate-700">
-                        <h3 class="text-xs font-black text-slate-500 uppercase tracking-widest mb-6">Mathematische Zuweisung</h3>
-                        <div class="code-block text-emerald-400 text-base">
-                            <button class="copy-btn" onclick="copyContent('mixOutput')">Copy SCSS</button>
-                            <code id="mixOutput">mix(black, $primary, 15%)</code>
+                        <h3 class="text-xs font-black text-slate-500 uppercase tracking-widest mb-6">Ergebnis für dein SCSS</h3>
+                        <div class="code-block text-emerald-400">
+                            <button class="copy-btn" onclick="copyContent(event, 'mixOutput')">Copy</button>
+                            <code id="mixOutput">mix(black, $brand-primary, 15%)</code>
                         </div>
-                        <p class="mt-8 text-slate-400 leading-relaxed text-sm">Berechnet das exakte Mischverhältnis von Schwarz oder Weiß, um deine Altfarbe prozedural aus der neuen Basis zu generieren.</p>
+                        <p class="mt-8 text-slate-400 text-sm italic">Berechnet, wie viel % Weiß oder Schwarz in deine Basisfarbe gemischt werden muss, um das Alt-Ergebnis zu erhalten.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. CONTRAST / WCAG (Legacy Design) -->
-            <div id="panel-contrast" class="tab-panel hidden animate-in fade-in duration-500">
+            <!-- 2. CONTRAST / WCAG -->
+            <div id="panel-contrast" class="tab-panel hidden">
                 <div class="grid md:grid-cols-2 gap-8">
                     <div class="card p-10">
-                        <h2 class="text-2xl font-bold mb-8">👁️ WCAG Analyzer</h2>
+                        <h2 class="text-2xl font-bold mb-8">👁️ WCAG & YIQ Analyzer</h2>
                         <div class="space-y-8">
                             <div>
                                 <label class="block text-[11px] font-black uppercase text-slate-500 mb-3">Hintergrundfarbe</label>
                                 <input type="color" id="conBgColor" value="#3b82f6" oninput="updateContrast();">
                             </div>
                             <div class="pt-8 border-t border-slate-700 grid grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Brand Dark</label>
-                                    <input type="color" id="conDarkText" value="#0f172a" oninput="updateContrast();">
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Brand Light</label>
-                                    <input type="color" id="conLightText" value="#f8fafc" oninput="updateContrast();">
-                                </div>
+                                <div><label class="block text-[10px] font-bold text-slate-500 mb-2">Text Dunkel</label><input type="color" id="conDarkText" value="#0f172a" oninput="updateContrast();"></div>
+                                <div><label class="block text-[10px] font-bold text-slate-500 mb-2">Text Hell</label><input type="color" id="conLightText" value="#f8fafc" oninput="updateContrast();"></div>
                             </div>
                         </div>
                     </div>
                     <div class="card overflow-hidden flex flex-col shadow-2xl">
                         <div id="conPreview" class="flex-grow p-16 flex flex-col items-center justify-center text-center transition-all duration-500">
-                            <h3 id="conPreviewText" class="text-4xl font-black mb-4 tracking-tighter">TEXT PREVIEW</h3>
+                            <h3 id="conPreviewText" class="text-4xl font-black mb-4 tracking-tighter uppercase">Vorschau</h3>
                             <p id="ratioRes" class="text-xl font-mono font-bold"></p>
                         </div>
-                        <div id="wcagBadge" class="p-4 text-center text-xs font-black uppercase tracking-widest text-white">Ratio Check</div>
+                        <div id="wcagBadge" class="p-4 text-center text-xs font-black uppercase tracking-widest text-white">Check...</div>
                     </div>
                 </div>
             </div>
 
-            <!-- 3. 60-30-10 RULE (Legacy Design) -->
-            <div id="panel-rule" class="tab-panel hidden animate-in fade-in duration-500">
+            <!-- 3. 60-30-10 RULE -->
+            <div id="panel-rule" class="tab-panel hidden">
                 <div class="card p-10">
                     <div class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
                         <h2 class="text-2xl font-bold">📐 Prozeduraler Designer</h2>
                         <div class="flex p-1.5 bg-slate-900 rounded-xl border border-slate-700">
-                            <button onclick="setRuleMode('light')" id="rule-l" class="px-6 py-2 text-[11px] font-black rounded-lg uppercase transition-all">Light Mode</button>
-                            <button onclick="setRuleMode('dark')" id="rule-d" class="px-6 py-2 text-[11px] font-black rounded-lg uppercase transition-all ml-2">Dark Mode</button>
+                            <button onclick="setRuleMode('light')" id="rule-l" class="px-6 py-2 text-[11px] font-black rounded-lg uppercase transition-all">Light</button>
+                            <button onclick="setRuleMode('dark')" id="rule-d" class="px-6 py-2 text-[11px] font-black rounded-lg uppercase transition-all ml-2">Dark</button>
                         </div>
                     </div>
                     <div class="grid md:grid-cols-3 gap-12">
                         <div class="space-y-8">
                             <label class="block text-[11px] font-black uppercase text-blue-400 mb-2">Akzentfarbe (10%)</label>
                             <input type="color" id="ruleAccent" value="#3b82f6" oninput="updateRule();">
-                            <div class="p-5 bg-slate-900/60 rounded-xl border border-slate-800 text-xs text-slate-400 leading-relaxed">
-                                Erzeugt eine harmonische Verteilung für Interfaces.
-                            </div>
                         </div>
                         <div class="md:col-span-2 space-y-8">
                             <div class="h-32 rounded-2xl flex overflow-hidden shadow-2xl border border-slate-800" id="ruleBar"></div>
                             <div class="code-block text-blue-300">
-                                <pre id="ruleOutput"></pre>
+                                <pre id="ruleOutput" class="text-xs"></pre>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 4. UI SEMANTIC (Branded Status) -->
-            <div id="panel-semantic" class="tab-panel hidden animate-in fade-in duration-500">
+            <!-- 4. UI SEMANTIC -->
+            <div id="panel-semantic" class="tab-panel hidden">
                 <div class="grid md:grid-cols-3 gap-8">
                     <div class="card p-10">
                         <h2 class="text-2xl font-bold mb-6">🎨 UI Semantics</h2>
                         <label class="block text-[11px] font-bold uppercase text-slate-500 mb-4 tracking-widest">Markenfarbe (Einfluss: 20%)</label>
                         <input type="color" id="semBase" value="#3b82f6" oninput="updateSemantic();">
-                        <p class="mt-8 text-sm text-slate-400 leading-relaxed italic">Mischt deine Marken-Identität in Statusfarben ein, um visuelle Harmonie zu schaffen.</p>
                     </div>
                     <div class="md:col-span-2 card p-10">
                         <div class="grid grid-cols-2 gap-6" id="semContainer"></div>
@@ -177,8 +171,8 @@
                 </div>
             </div>
 
-            <!-- 5. SCALE PRO (Mono & Duo) -->
-            <div id="panel-scale" class="tab-panel hidden animate-in fade-in duration-500">
+            <!-- 5. SCALE PRO -->
+            <div id="panel-scale" class="tab-panel hidden">
                 <div class="card p-10">
                     <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
                         <h2 class="text-2xl font-bold">🪜 Scale Pro</h2>
@@ -189,59 +183,44 @@
                     </div>
                     <div class="grid md:grid-cols-4 gap-10">
                         <div class="space-y-6">
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Farbe A</label>
-                                <input type="color" id="scaleA" value="#3b82f6" oninput="updateScale();">
-                            </div>
-                            <div id="scaleBWrapper" class="hidden">
-                                <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Farbe B</label>
-                                <input type="color" id="scaleB" value="#10b981" oninput="updateScale();">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Schritte: <span id="scCountText">7</span></label>
-                                <input type="range" id="scaleCount" min="3" max="15" step="2" value="7" oninput="updateScale();" class="custom-range">
-                            </div>
+                            <div><label class="block text-[10px] font-bold mb-2 uppercase">Farbe A</label><input type="color" id="scaleA" value="#3b82f6" oninput="updateScale();"></div>
+                            <div id="scaleBWrapper" class="hidden"><label class="block text-[10px] font-bold mb-2 uppercase">Farbe B</label><input type="color" id="scaleB" value="#10b981" oninput="updateScale();"></div>
+                            <div><label class="block text-[10px] font-bold mb-2 uppercase">Stufen: <span id="scCountText">7</span></label><input type="range" id="scaleCount" min="3" max="15" step="2" value="7" oninput="updateScale();" class="custom-range"></div>
                         </div>
                         <div class="md:col-span-3 space-y-8">
                             <div id="scalePreview" class="h-20 flex rounded-2xl overflow-hidden shadow-xl border border-slate-700"></div>
-                            <div class="code-block text-blue-300">
-                                <pre id="scaleOutput" class="text-xs"></pre>
-                            </div>
+                            <div class="code-block text-blue-300"><pre id="scaleOutput" class="text-xs"></pre></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 6. EXPLORER (Dynamisch) -->
-            <div id="panel-explorer" class="tab-panel hidden animate-in fade-in duration-500">
+            <!-- 6. EXPLORER -->
+            <div id="panel-explorer" class="tab-panel hidden">
                 <div class="grid md:grid-cols-3 gap-8">
                     <div class="card p-10">
                         <h2 class="text-2xl font-bold mb-6">🔍 Explorer</h2>
-                        <label class="block text-[11px] font-bold uppercase text-slate-500 mb-4 tracking-widest">Hintergrundfarbe wählen</label>
+                        <label class="block text-[11px] font-bold uppercase text-slate-500 mb-4 tracking-widest">Hintergrundfarbe</label>
                         <input type="color" id="expBase" value="#0f172a" oninput="updateExplorer();">
-                        <p class="mt-8 text-sm text-slate-400 italic">Sucht mathematisch harmonische Akzente mit optimalem Kontrast zu deinem Hintergrund.</p>
                     </div>
                     <div class="md:col-span-2 space-y-4 max-h-[500px] overflow-y-auto pr-2 no-scrollbar" id="expResults"></div>
                 </div>
             </div>
 
             <!-- 7. THEME ARCHITECT (Atmospheric / UI Generator) -->
-            <div id="panel-quiet" class="tab-panel hidden animate-in fade-in duration-500">
+            <div id="panel-quiet" class="tab-panel hidden">
                 <div class="grid md:grid-cols-3 gap-8">
                     <div class="card p-10 border-emerald-500/20">
                         <h2 class="text-2xl font-bold text-emerald-400 mb-8">🌿 Theme Architect</h2>
                         <div class="space-y-8">
                             <div>
-                                <label class="block text-[11px] font-black uppercase text-slate-500 mb-3 tracking-widest">Basis Hintergrundfarbe</label>
+                                <label class="block text-[11px] font-black uppercase text-slate-500 mb-3 tracking-widest">Hauptfarbe (Basis)</label>
                                 <input type="color" id="quietBase" value="#0A192F" oninput="updateQuiet();">
                             </div>
                             <div class="flex p-1.5 bg-slate-900 rounded-xl border border-slate-700">
                                 <button onclick="setThemeMode('light')" id="tm-l" class="flex-1 py-2 text-[10px] font-black rounded-lg uppercase">Light</button>
                                 <button onclick="setThemeMode('dark')" id="tm-d" class="flex-1 py-2 text-[10px] font-black rounded-lg uppercase ml-2 bg-blue-600">Dark</button>
                             </div>
-                            <p class="text-xs text-slate-400 leading-relaxed italic border-t border-slate-700 pt-6">
-                                Dieses Tool berechnet aus deiner Hintergrundfarbe alle notwendigen UI-Ebenen: Oberflächen, Sidebar, Linien und Schatten.
-                            </p>
                         </div>
                     </div>
                     <div class="md:col-span-2 space-y-8">
@@ -252,14 +231,12 @@
                                 <div class="w-2/3 h-4 rounded-full opacity-10 bg-current"></div>
                             </div>
                             <div id="uiContent" class="flex-1 rounded-2xl p-6 border transition-all duration-500 relative">
-                                <h4 class="font-bold text-lg mb-4">Dashboard Preview</h4>
+                                <h4 class="font-bold text-lg mb-4">UI Preview</h4>
                                 <div class="w-full h-24 rounded-xl mb-4 bg-current opacity-5"></div>
-                                <div id="uiShadowBox" class="absolute -bottom-4 -right-4 w-12 h-12 rounded-full border border-current opacity-20"></div>
                             </div>
                         </div>
-                        <!-- CODE OUTPUT -->
                         <div class="code-block text-emerald-300">
-                            <button class="copy-btn" onclick="copyContent('quietOutput')">Copy Theme</button>
+                            <button class="copy-btn" onclick="copyContent(event, 'quietOutput')">Copy Theme</button>
                             <pre id="quietOutput" class="text-xs"></pre>
                         </div>
                     </div>
@@ -270,29 +247,33 @@
     </div>
 
     <script>
-        // --- CORE MATH ---
-        function hexToRgb(hex) {
+        // --- GLOBALS ---
+        let ruleMode = 'light';
+        let scaleType = 'mono';
+        let themeMode = 'dark';
+
+        // --- MATH HELPERS ---
+        const hexToRgb = (hex) => {
             const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
             return r ? { r: parseInt(r[1], 16), g: parseInt(r[2], 16), b: parseInt(r[3], 16) } : null;
-        }
-        function rgbToHex(r, g, b) { return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1); }
-        function mix(c1, c2, weight) {
-            const p = weight;
-            const r = Math.round(c1.r * p + c2.r * (1 - p));
-            const g = Math.round(c1.g * p + c2.g * (1 - p));
-            const b = Math.round(c1.b * p + c2.b * (1 - p));
+        };
+        const rgbToHex = (r, g, b) => "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        const mix = (c1, c2, weight) => {
+            const r = Math.round(c1.r * weight + c2.r * (1 - weight));
+            const g = Math.round(c1.g * weight + c2.g * (1 - weight));
+            const b = Math.round(c1.b * weight + c2.b * (1 - weight));
             return { r, g, b, hex: rgbToHex(r, g, b) };
-        }
-        function getYIQ(rgb) { return ((rgb.r * 299) + (rgb.g * 587) + (rgb.b * 114)) / 1000; }
-        function getLuminance(rgb) {
+        };
+        const getYIQ = (rgb) => ((rgb.r * 299) + (rgb.g * 587) + (rgb.b * 114)) / 1000;
+        const getLuminance = (rgb) => {
             let a = [rgb.r, rgb.g, rgb.b].map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
             return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
-        }
-        function getContrast(rgb1, rgb2) {
+        };
+        const getContrast = (rgb1, rgb2) => {
             let l1 = getLuminance(rgb1) + 0.05, l2 = getLuminance(rgb2) + 0.05;
             return l1 > l2 ? l1 / l2 : l2 / l1;
-        }
-        function rgbToHsl(r, g, b) {
+        };
+        const rgbToHsl = (r, g, b) => {
             r /= 255, g /= 255, b /= 255;
             let max = Math.max(r, g, b), min = Math.min(r, g, b), h, s, l = (max + min) / 2;
             if(max == min) { h = s = 0; } else {
@@ -300,127 +281,134 @@
                 switch(max){ case r: h = (g - b) / d + (g < b ? 6 : 0); break; case g: h = (b - r) / d + 2; break; case b: h = (r - g) / d + 4; break; }
                 h /= 6;
             } return { h: h * 360, s: s * 100, l: l * 100 };
-        }
-        function hslToRgb(h, s, l) {
+        };
+        const hslToRgb = (h, s, l) => {
             s /= 100; l /= 100; h /= 360;
             let r, g, b;
             if(s == 0){ r = g = b = l; } else {
-                function q2r(p, q, t){ if(t < 0) t += 1; if(t > 1) t -= 1; if(t < 1/6) return p + (q - p) * 6 * t; if(t < 1/2) return q; if(t < 2/3) return p + (q - p) * (2/3 - t) * 6; return p; }
+                const q2r = (p, q, t) => { if(t < 0) t += 1; if(t > 1) t -= 1; if(t < 1/6) return p + (q - p) * 6 * t; if(t < 1/2) return q; if(t < 2/3) return p + (q - p) * (2/3 - t) * 6; return p; };
                 let q = l < 0.5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q;
                 r = q2r(p, q, h + 1/3); g = q2r(p, q, h); b = q2r(p, q, h - 1/3);
             } return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255), hex: rgbToHex(Math.round(r*255), Math.round(g*255), Math.round(b*255)) };
-        }
+        };
 
-        // --- TABS ---
+        // --- SYSTEM ---
         function showTab(id) {
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('panel-' + id).classList.remove('hidden');
-            document.getElementById('tab-' + id).classList.add('active');
+            const panel = document.getElementById('panel-' + id);
+            if(panel) panel.classList.remove('hidden');
+            const btn = document.getElementById('tab-' + id);
+            if(btn) btn.classList.add('active');
         }
 
-        function syncHex(cId, hId) { document.getElementById(hId).value = document.getElementById(cId).value; }
-        function syncColor(hId, cId) { document.getElementById(cId).value = document.getElementById(hId).value; }
+        function syncHex(cId, hId) { const c = document.getElementById(cId), h = document.getElementById(hId); if(c && h) h.value = c.value.toUpperCase(); }
+        function syncColor(hId, cId) { const c = document.getElementById(cId), h = document.getElementById(hId); if(c && h && /^#[0-9A-F]{6}$/i.test(h.value)) c.value = h.value; }
 
-        function copyContent(id) {
-            const text = document.getElementById(id).innerText;
-            const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
-            const btn = event.currentTarget; const old = btn.innerText; btn.innerText = "COPIED!"; setTimeout(()=>btn.innerText = old, 1200);
+        function copyContent(e, id) {
+            const el = document.getElementById(id);
+            if(!el) return;
+            const ta = document.createElement("textarea"); ta.value = el.innerText; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
+            const btn = e.currentTarget; const old = btn.innerText; btn.innerText = "Copied!"; setTimeout(()=>btn.innerText = old, 1200);
         }
 
-        // --- 1. MIX ---
+        // --- UPDATERS ---
         function updateMix() {
-            const b = hexToRgb(document.getElementById('mixBaseColor').value), t = hexToRgb(document.getElementById('mixTargetColor').value);
+            const bIn = document.getElementById('mixBaseColor'), tIn = document.getElementById('mixTargetColor');
+            if(!bIn || !tIn) return;
+            const b = hexToRgb(bIn.value), t = hexToRgb(tIn.value);
             if(!b || !t) return;
             const bAvg = (b.r + b.g + b.b)/3, tAvg = (t.r + t.g + t.b)/3;
-            let pColor = tAvg > bAvg ? {r:255, g:255, b:255, name:'white'} : {r:0, g:0, b:0, name:'black'};
-            const ds = [(t.r-b.r)/(pColor.r-b.r), (t.g-b.g)/(pColor.g-b.g), (t.b-b.b)/(pColor.b-b.b)].filter(v=>isFinite(v)&&!isNaN(v));
-            const p = ds.length > 0 ? Math.round((ds.reduce((a,b)=>a+b)/ds.length)*100) : 0;
-            document.getElementById('mixOutput').innerText = `mix(${pColor.name}, $brand-primary, ${Math.max(0, p)}%)`;
+            let partner = tAvg > bAvg ? {r:255, g:255, b:255, name:'white'} : {r:0, g:0, b:0, name:'black'};
+            const ds = [(t.r-b.r)/(partner.r-b.r), (t.g-b.g)/(partner.g-b.g), (t.b-b.b)/(partner.b-b.b)].filter(v=>isFinite(v)&&!isNaN(v));
+            const p = ds.length > 0 ? Math.round((ds.reduce((x,y)=>x+y)/ds.length)*100) : 0;
+            document.getElementById('mixOutput').innerText = `mix(${partner.name}, $brand-primary, ${Math.max(0, p)}%)`;
         }
 
-        // --- 2. CONTRAST ---
         function updateContrast() {
-            const bg = hexToRgb(document.getElementById('conBgColor').value);
-            const dark = hexToRgb(document.getElementById('conDarkText').value), light = hexToRgb(document.getElementById('conLightText').value);
+            const bgIn = document.getElementById('conBgColor'), darkIn = document.getElementById('conDarkText'), lightIn = document.getElementById('conLightText');
+            if(!bgIn || !darkIn || !lightIn) return;
+            const bg = hexToRgb(bgIn.value), dark = hexToRgb(darkIn.value), light = hexToRgb(lightIn.value);
             const isL = getYIQ(bg) >= 128;
-            const txt = isL ? dark : light, txtHex = isL ? document.getElementById('conDarkText').value : document.getElementById('conLightText').value;
-            const r = getContrast(bg, txt).toFixed(2);
+            const txt = isL ? dark : light, txtHex = isL ? darkIn.value : lightIn.value;
+            const ratio = getContrast(bg, txt).toFixed(2);
             const prev = document.getElementById('conPreview');
-            prev.style.backgroundColor = document.getElementById('conBgColor').value;
-            document.getElementById('conPreviewText').style.color = txtHex;
-            document.getElementById('ratioRes').innerText = `${r} : 1`;
-            const b = document.getElementById('wcagBadge');
-            b.innerText = r >= 4.5 ? "AA - BESTANDEN" : "KRITISCH";
-            b.style.backgroundColor = r >= 4.5 ? "#10b981" : "#ef4444";
+            if(prev) {
+                prev.style.backgroundColor = bgIn.value;
+                document.getElementById('conPreviewText').style.color = txtHex;
+                document.getElementById('ratioRes').innerText = `${ratio} : 1`;
+                const badge = document.getElementById('wcagBadge');
+                if (ratio >= 7) {badge.innerText = "AAA - BESTANDEN";}
+                else if (ratio >= 4.5) {badge.innerText = "AA - BESTANDEN";}
+                else {badge.innerText = "KRITISCH";}
+                badge.style.backgroundColor = ratio >= 4.5 ? "#10b981" : "#ef4444";
+            }
         }
 
-        // --- 3. 60-30-10 ---
-        let ruleMode = 'light';
-        function setRuleMode(m) {
-            ruleMode = m;
-            document.getElementById('rule-l').className = m==='light' ? 'px-6 py-2 text-[11px] font-black rounded-lg uppercase transition-all bg-blue-600 text-white' : 'px-6 py-2 text-[11px] font-black rounded-lg uppercase transition-all bg-slate-800 text-slate-500';
-            document.getElementById('rule-d').className = m==='dark' ? 'px-6 py-2 text-[11px] font-black rounded-lg uppercase transition-all bg-blue-600 text-white' : 'px-6 py-2 text-[11px] font-black rounded-lg uppercase transition-all bg-slate-800 text-slate-500';
-            updateRule();
-        }
+        function setRuleMode(m) { ruleMode = m; updateRule(); }
         function updateRule() {
-            const acc = hexToRgb(document.getElementById('ruleAccent').value);
+            const accIn = document.getElementById('ruleAccent');
+            if(!accIn) return;
+            const acc = hexToRgb(accIn.value);
             let b = ruleMode === 'light' ? "#F8FAFC" : "#0F172A";
             let s = ruleMode === 'light' ? mix(acc, {r:255,g:255,b:255}, 0.1).hex : mix(acc, {r:15,g:23,b:42}, 0.15).hex;
             const bar = document.getElementById('ruleBar');
-            bar.innerHTML = `<div style="width:60%; background:${b}"></div><div style="width:30%; background:${s}"></div><div style="width:10%; background:${document.getElementById('ruleAccent').value}"></div>`;
-            document.getElementById('ruleOutput').innerText = `$base: ${b};\n$secondary: ${s};\n$accent: ${document.getElementById('ruleAccent').value};`;
+            if(bar) {
+                bar.innerHTML = `<div style="width:60%; background:${b}"></div><div style="width:30%; background:${s}"></div><div style="width:10%; background:${accIn.value}"></div>`;
+                document.getElementById('ruleOutput').innerText = `$base: ${b};\n$secondary: ${s};\n$accent: ${accIn.value};`;
+                document.getElementById('rule-l').classList.toggle('bg-blue-600', ruleMode==='light');
+                document.getElementById('rule-d').classList.toggle('bg-blue-600', ruleMode==='dark');
+            }
         }
 
-        // --- 4. SEMANTIC ---
         function updateSemantic() {
-            const brand = hexToRgb(document.getElementById('semBase').value);
+            const bIn = document.getElementById('semBase');
+            if(!bIn) return;
+            const brand = hexToRgb(bIn.value);
             const states = [{n:'Info', c:{r:59,g:130,b:246}}, {n:'Success', c:{r:34,g:197,b:94}}, {n:'Warning', c:{r:234,g:179,b:8}}, {n:'Danger', c:{r:239,g:68,b:68}}];
-            const cont = document.getElementById('semContainer'); cont.innerHTML = '';
+            const cont = document.getElementById('semContainer');
+            if(!cont) return;
+            cont.innerHTML = '';
             let scss = '$semantic-tokens: (\n';
             states.forEach(s => {
                 const tint = mix(brand, s.c, 0.2);
                 const isL = getYIQ(tint) >= 128;
                 const txt = isL ? "#000" : "#fff";
-                cont.innerHTML += `<div class="p-5 rounded-2xl flex flex-col items-center justify-center font-bold text-xs" style="background:${tint.hex}; color:${txt}"><span>${s.n}</span><span class="opacity-50 font-mono mt-1">${tint.hex}</span></div>`;
+                cont.innerHTML += `<div class="p-5 rounded-2xl flex flex-col items-center justify-center font-bold text-xs shadow-lg" style="background:${tint.hex}; color:${txt}"><span>${s.n}</span><span class="opacity-50 font-mono mt-1">${tint.hex}</span></div>`;
                 scss += `  "${s.n.toLowerCase()}": ( "bg": ${tint.hex}, "text": ${txt} ),\n`;
             });
             scss += ');'; document.getElementById('semOutput').innerText = scss;
         }
 
-        // --- 5. SCALE PRO ---
-        let scaleType = 'mono';
-        function setScaleType(t) {
-            scaleType = t;
-            document.getElementById('sc-mono').className = t==='mono' ? 'px-5 py-2 text-[10px] font-black rounded-lg uppercase bg-blue-600 text-white' : 'px-5 py-2 text-[10px] font-black rounded-lg uppercase bg-slate-800 text-slate-500';
-            document.getElementById('sc-duo').className = t==='duo' ? 'px-5 py-2 text-[10px] font-black rounded-lg uppercase bg-blue-600 text-white' : 'px-5 py-2 text-[10px] font-black rounded-lg uppercase bg-slate-800 text-slate-500';
-            document.getElementById('scaleBWrapper').className = t==='duo' ? 'block' : 'hidden';
-            updateScale();
-        }
+        function setScaleType(t) { scaleType = t; updateScale(); }
         function updateScale() {
-            const a = hexToRgb(document.getElementById('scaleA').value), b = hexToRgb(document.getElementById('scaleB').value), count = parseInt(document.getElementById('scaleCount').value);
+            const aIn = document.getElementById('scaleA'), bIn = document.getElementById('scaleB'), cIn = document.getElementById('scaleCount');
+            if(!aIn || !bIn || !cIn) return;
+            const a = hexToRgb(aIn.value), b = hexToRgb(bIn.value), count = parseInt(cIn.value);
             document.getElementById('scCountText').innerText = count;
-            const prev = document.getElementById('scalePreview'); prev.innerHTML = '';
+            document.getElementById('sc-mono').classList.toggle('bg-blue-600', scaleType==='mono');
+            document.getElementById('sc-duo').classList.toggle('bg-blue-600', scaleType==='duo');
+            document.getElementById('scaleBWrapper').classList.toggle('hidden', scaleType!=='duo');
+            const prev = document.getElementById('scalePreview');
+            if(!prev) return;
+            prev.innerHTML = '';
             let scss = '$color-scale: (\n';
             for(let i=0; i<count; i++) {
                 const w = i / (count-1);
-                let c;
-                if(scaleType === 'mono') {
-                    // Von Weiß über Farbe nach Schwarz
-                    c = w < 0.5 ? mix(a, {r:255,g:255,b:255}, w*2) : mix({r:0,g:0,b:0}, a, (w-0.5)*2);
-                } else {
-                    c = mix(b, a, w);
-                }
+                let c = scaleType === 'mono' ? (w < 0.5 ? mix(a, {r:255,g:255,b:255}, w*2) : mix({r:0,g:0,b:0}, a, (w-0.5)*2)) : mix(b, a, w);
                 prev.innerHTML += `<div style="flex:1; background:${c.hex}"></div>`;
                 scss += `  "${(i+1)*100}": ${c.hex},\n`;
             }
             scss += ');'; document.getElementById('scaleOutput').innerText = scss;
         }
 
-        // --- 6. EXPLORER ---
         function updateExplorer() {
-            const bg = hexToRgb(document.getElementById('expBase').value), hsl = rgbToHsl(bg.r, bg.g, bg.b);
-            const res = document.getElementById('expResults'); res.innerHTML = '';
+            const bIn = document.getElementById('expBase');
+            if(!bIn) return;
+            const bg = hexToRgb(bIn.value), hsl = rgbToHsl(bg.r, bg.g, bg.b);
+            const res = document.getElementById('expResults');
+            if(!res) return;
+            res.innerHTML = '';
             const hars = [{n:'Komplementär', h:180}, {n:'Triadisch A', h:120}, {n:'Triadisch B', h:240}, {n:'Analog A', h:30}, {n:'Analog B', h:330}];
             hars.forEach(h => {
                 const acc = hslToRgb((hsl.h + h.h) % 360, Math.max(hsl.s, 60), Math.max(hsl.l, 50));
@@ -428,37 +416,58 @@
                 res.innerHTML += `<div class="card p-5 flex items-center justify-between border-l-4" style="border-left-color:${acc.hex}">
                     <div><p class="text-[10px] font-bold text-slate-500 uppercase">${h.n}</p><p class="font-mono text-sm">${acc.hex}</p></div>
                     <div class="flex items-center space-x-6">
-                        <div class="px-4 py-2 rounded-lg font-bold text-xs" style="background:${acc.hex}; color:${getYIQ(acc)>=128?'#000':'#fff'}">Button</div>
-                        <div class="text-right"><p class="text-[10px] font-bold text-slate-500 uppercase">Contrast</p><p class="text-sm font-bold ${ratio>=4.5?'text-emerald-400':'text-red-400'}">${ratio}:1</p></div>
+                        <div class="px-4 py-2 rounded-lg font-bold text-xs shadow" style="background:${acc.hex}; color:${getYIQ(acc)>=128?'#000':'#fff'}">Button</div>
+                        <div class="text-right"><p class="text-[10px] font-bold text-slate-500 uppercase text-slate-500">Contrast</p><p class="text-sm font-bold ${ratio>=4.5?'text-emerald-400':'text-red-400'}">${ratio}:1</p></div>
                     </div>
                 </div>`;
             });
         }
 
-        // --- 7. QUIET UI ---
+        function setThemeMode(m) { themeMode = m; updateQuiet(); }
         function updateQuiet() {
-            const brand = hexToRgb(document.getElementById('quietBase').value);
-            const cont = document.getElementById('quietContainer'); cont.innerHTML = '';
-            const steps = [
-                {n:'Surface', m:0.02, b:{r:255,g:255,b:255}},
-                {n:'Background', m:0.05, b:{r:250,g:252,b:255}},
-                {n:'Sidebar / Offset', m:0.10, b:{r:240,g:245,b:250}},
-                {n:'Border / Line', m:0.20, b:{r:210,g:220,b:230}}
-            ];
-            let scss = '// Atmospheric Tinted Neutrals\n$quiet-ui: (\n';
-            steps.forEach(s => {
-                const t = mix(brand, s.b, s.m);
-                cont.innerHTML += `<div class="flex items-center justify-between p-5 rounded-2xl border border-slate-700/50" style="background:${t.hex}">
-                    <span class="text-[10px] font-bold uppercase text-slate-500 tracking-widest">${s.n}</span>
-                    <span class="font-mono text-xs text-slate-400">${t.hex}</span>
-                </div>`;
-                scss += `  "${s.n.toLowerCase().replace(/ /g, '-')}": ${t.hex},\n`;
-            });
-            scss += ');'; document.getElementById('quietOutput').innerText = scss;
+            const bIn = document.getElementById('quietBase');
+            if(!bIn) return;
+            const bg = hexToRgb(bIn.value);
+            const isDark = themeMode === 'dark';
+
+            document.getElementById('tm-l').classList.toggle('bg-blue-600', !isDark);
+            document.getElementById('tm-d').classList.toggle('bg-blue-600', isDark);
+
+            let surf, side, bord, shad, txt = isDark ? "#FFFFFF" : "#0F172A";
+            if(isDark) {
+                surf = mix({r:255,g:255,b:255}, bg, 0.05);
+                side = mix({r:0,g:0,b:0}, bg, 0.15);
+                bord = mix({r:255,g:255,b:255}, bg, 0.15);
+                shad = mix({r:0,g:0,b:0}, bg, 0.40);
+            } else {
+                surf = mix({r:0,g:0,b:0}, bg, 0.03);
+                side = mix({r:0,g:0,b:0}, bg, 0.08);
+                bord = mix({r:0,g:0,b:0}, bg, 0.12);
+                shad = mix({r:0,g:0,b:0}, bg, 0.10);
+            }
+
+            const prev = document.getElementById('uiPreview');
+            if(prev) {
+                prev.style.backgroundColor = bIn.value; prev.style.color = txt; prev.style.borderColor = bord.hex;
+                document.getElementById('uiSidebar').style.backgroundColor = side.hex;
+                document.getElementById('uiSidebar').style.borderColor = bord.hex;
+                document.getElementById('uiContent').style.backgroundColor = surf.hex;
+                document.getElementById('uiContent').style.borderColor = bord.hex;
+                document.getElementById('uiContent').style.boxShadow = `10px 10px 30px ${shad.hex}`;
+                document.getElementById('quietOutput').innerText =
+`// Theme Architect: ${themeMode.toUpperCase()}
+$theme-bg:      ${bIn.value};
+$theme-surface: ${surf.hex};
+$theme-sidebar: ${side.hex};
+$theme-border:  ${bord.hex};
+$theme-shadow:  ${shad.hex};
+$theme-text:    ${txt};`;
+            }
         }
 
+        // --- INIT ---
         window.onload = () => {
-            updateMix(); updateContrast(); setRuleMode('light'); updateSemantic(); setScaleType('mono'); updateExplorer(); updateQuiet();
+            updateMix(); updateContrast(); updateRule(); updateSemantic(); updateScale(); updateExplorer(); updateQuiet();
         };
     </script>
 </body>
