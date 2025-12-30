@@ -62,6 +62,7 @@
         <div class="overflow-x-auto w-full mb-12 no-scrollbar">
             <nav class="flex min-w-max justify-start md:justify-center space-x-2 md:space-x-4 border-b border-slate-800">
                 <button onclick="showTab('mix')" id="tab-mix" class="tab-btn active">Mix Analyzer</button>
+                <button onclick="showTab('shift')" id="tab-shift" class="tab-btn">Shift Pro</button>
                 <button onclick="showTab('contrast')" id="tab-contrast" class="tab-btn">Contrast</button>
                 <button onclick="showTab('rule')" id="tab-rule" class="tab-btn">60-30-10</button>
                 <button onclick="showTab('semantic')" id="tab-semantic" class="tab-btn">Semantics</button>
@@ -103,6 +104,77 @@
                         <p class="mt-8 text-slate-400 text-[11px] italic leading-relaxed" id="mixExplanation">
                             Berechnet im Auto-Modus die exakte Partnerfarbe, um von der Basis zum Ziel zu gelangen.
                         </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1.5 DYNAMIC SHIFT -->
+            <div id="panel-shift" class="tab-panel hidden">
+                <div class="grid md:grid-cols-12 gap-8">
+                    <div class="md:col-span-5 space-y-6">
+                        <div class="card p-8">
+                            <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3 text-yellow-400">⚡</span> Dynamic HSL Shift</h2>
+                            <div class="space-y-6">
+                                <div class="p-4 bg-slate-900/50 rounded-xl border border-slate-700">
+                                    <p class="text-[10px] font-black text-slate-500 uppercase mb-4 tracking-tighter">1. Referenz-Kalibrierung</p>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-[9px] font-bold text-slate-400 mb-1 uppercase">Aktuelle Primär</label>
+                                            <input type="color" id="shiftRefBase" value="#3b82f6" oninput="updateShift();">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[9px] font-bold text-slate-400 mb-1 uppercase">Wunsch Ziel</label>
+                                            <input type="color" id="shiftRefTarget" value="#0044ff" oninput="updateShift();">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 bg-blue-600/10 rounded-xl border border-blue-500/30">
+                                    <p class="text-[10px] font-black text-blue-400 uppercase mb-4 tracking-tighter">2. Stress-Test (Primärfarbe ändern)</p>
+                                    <input type="color" id="shiftSimBase" value="#3b82f6" oninput="updateShift();">
+                                    <p class="text-[10px] text-slate-400 mt-3 leading-tight italic">Ändere diese Farbe, um zu sehen wie die Menü-Farbe mathematisch korrekt mitwandert.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="code-block text-blue-300">
+                            <button class="copy-btn" onclick="copyContent(event, 'shiftOutput')">Copy</button>
+                            <pre id="shiftOutput" class="text-[10px] leading-relaxed"></pre>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-7 card p-8 border-dashed border-slate-600">
+                        <h3 class="text-xs font-black text-slate-500 uppercase mb-8 tracking-widest">Sidebar & Menu Preview</h3>
+                        <div class="grid md:grid-cols-2 gap-10">
+                            <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-700 shadow-2xl">
+                                <div class="space-y-8">
+                                    <div>
+                                        <span id="menuLabel1" class="text-[10px] font-black uppercase mb-3 block transition-colors duration-300">Projekt Management</span>
+                                        <div class="space-y-2 opacity-30">
+                                            <div class="h-2 w-full bg-slate-400 rounded"></div>
+                                            <div class="h-2 w-4/5 bg-slate-400 rounded"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span id="menuLabel2" class="text-[10px] font-black uppercase mb-3 block transition-colors duration-300">Team Kommunikation</span>
+                                        <div class="flex gap-2">
+                                            <div class="w-6 h-6 rounded bg-slate-700"></div>
+                                            <div class="w-6 h-6 rounded bg-slate-700"></div>
+                                            <div id="activeDot" class="w-6 h-6 rounded shadow-lg transition-all duration-300"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col justify-center space-y-4">
+                                <div class="p-4 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-between">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase">Neue Primär</span>
+                                    <div id="simBaseIndicator" class="w-12 h-12 rounded-lg shadow-inner"></div>
+                                </div>
+                                <div class="p-4 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-between">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase">Menü Farbe</span>
+                                    <div id="simTargetIndicator" class="w-12 h-12 rounded-lg shadow-xl"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -215,7 +287,7 @@
                                 <div class="w-2/3 h-4 rounded-full opacity-10 bg-current"></div>
                             </div>
                             <div id="uiContent" class="flex-1 rounded-2xl p-6 border transition-all duration-500 relative text-white">
-                                <h4 class="font-bold text-lg mb-4 uppercase tracking-tighter">UI Preview</h4>
+                                <h4 class="font-bold text-lg mb-4 uppercase tracking-tighter text-blue-400">UI Preview</h4>
                                 <div class="w-full h-24 rounded-xl mb-4 bg-current opacity-5 border border-current"></div>
                             </div>
                         </div>
@@ -238,10 +310,7 @@
                         </div>
                     </div>
                     <div class="md:col-span-2 space-y-8">
-                        <div id="glassPreviewContainer" class="rounded-3xl p-16 glass-bg-pattern flex items-center justify-center relative overflow-hidden border border-slate-800 shadow-2xl bg-cover bg-center transition-all duration-500" style="min-height: 450px;">
-                            <div class="blob w-32 h-32 bg-blue-500" style="top: 20%; left: 20%; animation-delay: 0s;"></div>
-                            <div class="blob w-24 h-24 bg-emerald-400" style="bottom: 30%; right: 25%; animation-delay: -2s;"></div>
-                            <div class="blob w-40 h-40 bg-purple-600" style="top: 50%; left: 60%; animation-delay: -5s;"></div>
+                        <div id="glassPreviewContainer" class="rounded-3xl p-16 glass-bg-pattern flex items-center justify-center relative overflow-hidden border border-slate-800 shadow-2xl bg-cover bg-center transition-all duration-500" style="min-height: 400px;">
                             <div id="glassPreviewPane" class="w-full max-w-sm p-12 rounded-3xl border transition-all duration-300 relative z-10 text-center">
                                 <h4 class="text-2xl font-black mb-4 uppercase">Frosted Glass</h4>
                             </div>
@@ -328,6 +397,27 @@
             return res ? { r: parseInt(res[1], 16), g: parseInt(res[2], 16), b: parseInt(res[3], 16) } : {r:0,g:0,b:0};
         }
         const rgbToHex = (r, g, b) => "#" + ((1 << 24) + (Math.max(0, Math.min(255, r)) << 16) + (Math.max(0, Math.min(255, g)) << 8) + Math.max(0, Math.min(255, b))).toString(16).slice(1).toUpperCase();
+        
+        const rgbToHsl = (r, g, b) => {
+            r /= 255, g /= 255, b /= 255;
+            let max = Math.max(r, g, b), min = Math.min(r, g, b), h, s, l = (max + min) / 2;
+            if(max == min) { h = s = 0; } else {
+                let d = max - min; s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch(max){ case r: h = (g - b) / d + (g < b ? 6 : 0); break; case g: h = (b - r) / d + 2; break; case b: h = (r - g) / d + 4; break; }
+                h /= 6;
+            } return { h: h * 360, s: s * 100, l: l * 100 };
+        };
+
+        const hslToRgb = (h, s, l) => {
+            s /= 100; l /= 100; h /= 360;
+            let r, g, b;
+            if(s == 0){ r = g = b = l; } else {
+                const q2r = (p, q, t) => { if(t < 0) t += 1; if(t > 1) t -= 1; if(t < 1/6) return p + (q - p) * 6 * t; if(t < 1/2) return q; if(t < 2/3) return p + (q - p) * (2/3 - t) * 6; return p; };
+                let q = l < 0.5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q;
+                r = q2r(p, q, h + 1/3); g = q2r(p, q, h); b = q2r(p, q, h - 1/3);
+            } return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255), hex: rgbToHex(Math.round(r*255), Math.round(g*255), Math.round(b*255)) };
+        };
+
         const mixColors = (c1, c2, w) => {
             const r = Math.round(c1.r * w + c2.r * (1-w)), g = Math.round(c1.g * w + c2.g * (1-w)), b = Math.round(c1.b * w + c2.b * (1-w));
             return { r, g, b, hex: rgbToHex(r,g,b) };
@@ -341,40 +431,26 @@
             let l1 = getLuminance(c1) + 0.05, l2 = getLuminance(c2) + 0.05;
             return l1 > l2 ? l1 / l2 : l2 / l1;
         };
-        const rgbToHsl = (r, g, b) => {
-            r /= 255, g /= 255, b /= 255;
-            let max = Math.max(r, g, b), min = Math.min(r, g, b), h, s, l = (max + min) / 2;
-            if(max == min) { h = s = 0; } else {
-                let d = max - min; s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-                switch(max){ case r: h = (g - b) / d + (g < b ? 6 : 0); break; case g: h = (b - r) / d + 2; break; case b: h = (r - g) / d + 4; break; }
-                h /= 6;
-            } return { h: h * 360, s: s * 100, l: l * 100 };
-        };
-        const hslToRgb = (h, s, l) => {
-            s /= 100; l /= 100; h /= 360;
-            let r, g, b;
-            if(s == 0){ r = g = b = l; } else {
-                const q2r = (p, q, t) => { if(t < 0) t += 1; if(t > 1) t -= 1; if(t < 1/6) return p + (q - p) * 6 * t; if(t < 1/2) return q; if(t < 2/3) return p + (q - p) * (2/3 - t) * 6; return p; };
-                let q = l < 0.5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q;
-                r = q2r(p, q, h + 1/3); g = q2r(p, q, h); b = q2r(p, q, h - 1/3);
-            } return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255), hex: rgbToHex(Math.round(r*255), Math.round(g*255), Math.round(b*255)) };
-        };
 
-        // --- UI ---
-        function showTab(id) {
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            const p = document.getElementById('panel-' + id); if(p) p.classList.remove('hidden');
-            const b = document.getElementById('tab-' + id); if(b) b.classList.add('active');
+        // --- CORE UPDATERS ---
+        function updateShift() {
+            const refBase = safeHexToRgb(document.getElementById('shiftRefBase').value);
+            const refTarget = safeHexToRgb(document.getElementById('shiftRefTarget').value);
+            const simBase = safeHexToRgb(document.getElementById('shiftSimBase').value);
+            const refBaseHsl = rgbToHsl(refBase.r, refBase.g, refBase.b);
+            const refTargetHsl = rgbToHsl(refTarget.r, refTarget.g, refTarget.b);
+            const delta = { h: refTargetHsl.h - refBaseHsl.h, s: refTargetHsl.s - refBaseHsl.s, l: refTargetHsl.l - refBaseHsl.l };
+            const simBaseHsl = rgbToHsl(simBase.r, simBase.g, simBase.b);
+            const finalHsl = { h: (simBaseHsl.h + delta.h + 360) % 360, s: Math.max(0, Math.min(100, simBaseHsl.s + delta.s)), l: Math.max(0, Math.min(100, simBaseHsl.l + delta.l)) };
+            const finalRgb = hslToRgb(finalHsl.h, finalHsl.s, finalHsl.l);
+            document.getElementById('simBaseIndicator').style.backgroundColor = document.getElementById('shiftSimBase').value;
+            document.getElementById('simTargetIndicator').style.backgroundColor = finalRgb.hex;
+            document.getElementById('menuLabel1').style.color = finalRgb.hex;
+            document.getElementById('menuLabel2').style.color = finalRgb.hex;
+            document.getElementById('activeDot').style.backgroundColor = finalRgb.hex;
+            document.getElementById('shiftOutput').innerText = `$menu-header: adjust-color($primary-base, $hue: ${delta.h.toFixed(1)}deg, $saturation: ${delta.s.toFixed(1)}%, $lightness: ${delta.l.toFixed(1)}%);`;
         }
-        function copyContent(e, id) {
-            const ta = document.createElement("textarea"); ta.value = document.getElementById(id).innerText; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
-            const btn = e.currentTarget; const old = btn.innerText; btn.innerText = "COPIED!"; setTimeout(()=>btn.innerText = old, 1200);
-        }
-        function handleVisualBgImage(input, containerId) { const f = input.files[0]; if(!f) return; const r = new FileReader(); r.onload = (e) => document.getElementById(containerId).style.backgroundImage = `url(${e.target.result})`; r.readAsDataURL(f); }
 
-        // --- UPDATERS ---
-        function setMixMode(m) { mixMode = m; document.getElementById('mix-mode-bw').classList.toggle('bg-blue-600', m==='bw'); document.getElementById('mix-mode-auto').classList.toggle('bg-blue-600', m==='auto'); updateMix(); }
         function updateMix() {
             const bR = safeHexToRgb(document.getElementById('mixBaseColor').value), tR = safeHexToRgb(document.getElementById('mixTargetColor').value);
             const vis = document.getElementById('mixVisualRecipe'); vis.innerHTML = ''; let scss = '';
@@ -384,23 +460,14 @@
                 const w = ds.length > 0 ? Math.round((ds.reduce((x,y)=>x+y)/ds.length)*100) : 0;
                 scss = `mix(${p.n}, $brand-primary, ${Math.max(0, w)}%)`;
             } else {
-                // Formula: Target = Partner * w + Base * (1 - w)
-                // Partner = (Target - Base * (1 - w)) / w
-                // We find the minimal w (percentage) such that Partner's R,G,B are within [0, 255]
                 let bestW = 0.01;
                 for(let w=0.01; w<=1.0; w+=0.01) {
-                    const r = (tR.r - bR.r * (1-w)) / w;
-                    const g = (tR.g - bR.g * (1-w)) / w;
-                    const b = (tR.b - bR.b * (1-w)) / w;
+                    const r = (tR.r - bR.r * (1-w)) / w; const g = (tR.g - bR.g * (1-w)) / w; const b = (tR.b - bR.b * (1-w)) / w;
                     if(r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) { bestW = w; break; }
                 }
-                const pR = Math.round((tR.r - bR.r * (1-bestW)) / bestW);
-                const pG = Math.round((tR.g - bR.g * (1-bestW)) / bestW);
-                const pB = Math.round((tR.b - bR.b * (1-bestW)) / bestW);
-                const pHex = rgbToHex(pR, pG, pB);
-                const percent = Math.round(bestW * 100);
-                scss = `mix(${pHex}, $brand-primary, ${percent}%)`;
-                vis.innerHTML = `<div class="flex items-center gap-2"><div class="w-6 h-6 rounded" style="background:${pHex}"></div><span class="text-[10px] font-bold uppercase text-slate-500">Auto-Partner: ${pHex}</span></div>`;
+                const pR = Math.round((tR.r - bR.r * (1-bestW)) / bestW), pG = Math.round((tR.g - bR.g * (1-bestW)) / bestW), pB = Math.round((tR.b - bR.b * (1-bestW)) / bestW);
+                const pHex = rgbToHex(pR, pG, pB); scss = `mix(${pHex}, $brand-primary, ${Math.round(bestW * 100)}%)`;
+                vis.innerHTML = `<div class="flex items-center gap-2"><div class="w-6 h-6 rounded" style="background:${pHex}"></div><span class="text-[10px] uppercase font-bold text-slate-500">Auto-Partner: ${pHex}</span></div>`;
             }
             document.getElementById('mixOutput').innerText = scss;
         }
@@ -429,7 +496,7 @@
             const cont = document.getElementById('semContainer'); cont.innerHTML = ''; let scss = '$semantic: (\n';
             states.forEach(s => {
                 const tint = mixColors(brand, s.c, 0.2), txt = getYIQ(tint) >= 128 ? "#000" : "#fff";
-                cont.innerHTML += `<div class="p-5 rounded-2xl flex flex-col items-center justify-center font-bold text-xs shadow-lg" style="background:${tint.hex}; color:${txt}"><span>${s.n}</span><span class="opacity-50 text-[10px] font-mono mt-1">${tint.hex}</span></div>`;
+                cont.innerHTML += `<div class="p-5 rounded-2xl flex flex-col items-center justify-center font-bold text-xs shadow-lg" style="background:${tint.hex}; color:${txt}"><span>${s.n}</span></div>`;
                 scss += `  "${s.n.toLowerCase()}": ( "bg": ${tint.hex}, "text": ${txt} ),\n`;
             });
             scss += ');'; document.getElementById('semOutput').innerText = scss;
@@ -474,12 +541,10 @@
 
         function updateGlass() {
             const ctxH = document.getElementById('glassContext').value, vbgH = document.getElementById('glassVisualBg').value, op = document.getElementById('glassOpacity').value/100, blur = document.getElementById('glassBlur').value;
-            const ctx = safeHexToRgb(ctxH), vbg = safeHexToRgb(vbgH);
-            document.getElementById('glassOpacityVal').innerText = (op*100) + "%"; document.getElementById('glassBlurVal').innerText = blur + "px";
-            document.getElementById('glassPreviewContainer').style.backgroundColor = vbgH;
-            const isL = getYIQ(ctx) >= 128, tint = isL ? {r:0,g:0,b:0} : {r:255,g:255,b:255}, bRgb = mixColors(ctx, tint, 0.8), bRgba = `rgba(${bRgb.r},${bRgb.g},${bRgb.b},0.3)`;
-            const pRgba = isL ? `rgba(255,255,255,${op})` : `rgba(${ctx.r},${ctx.g},${ctx.b},${op})`, txt = getYIQ(vbg) >= 128 ? "#000" : "#fff";
-            const pane = document.getElementById('glassPreviewPane'); pane.style.background = pRgba; pane.style.backdropFilter = `blur(${blur}px)`; pane.style.borderColor = bRgba; pane.style.color = txt;
+            const ctx = safeHexToRgb(ctxH); document.getElementById('glassOpacityVal').innerText = (op*100) + "%"; document.getElementById('glassBlurVal').innerText = blur + "px";
+            const tint = getYIQ(ctx) >= 128 ? {r:0,g:0,b:0} : {r:255,g:255,b:255}, bRgb = mixColors(ctx, tint, 0.8), bRgba = `rgba(${bRgb.r},${bRgb.g},${bRgb.b},0.3)`;
+            const pRgba = getYIQ(ctx) >= 128 ? `rgba(255,255,255,${op})` : `rgba(${ctx.r},${ctx.g},${ctx.b},${op})`;
+            const pane = document.getElementById('glassPreviewPane'); pane.style.background = pRgba; pane.style.backdropFilter = `blur(${blur}px)`; pane.style.borderColor = bRgba; pane.style.color = getYIQ(safeHexToRgb(vbgH)) >= 128 ? "#000" : "#fff";
             document.getElementById('glassOutput').innerText = `.glass {\n  background: ${pRgba};\n  backdrop-filter: blur(${blur}px);\n  border: 1px solid ${bRgba};\n}`;
         }
 
@@ -511,8 +576,24 @@
             document.getElementById('shadOutput').innerText = `box-shadow: ${css};`;
         }
 
+        function handleVisualBgImage(input, containerId) { const f = input.files[0]; if(!f) return; const r = new FileReader(); r.onload = (e) => document.getElementById(containerId).style.backgroundImage = `url(${e.target.result})`; r.readAsDataURL(f); }
+
+        function showTab(id) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            const p = document.getElementById('panel-' + id); if(p) p.classList.remove('hidden');
+            const b = document.getElementById('tab-' + id); if(b) b.classList.add('active');
+        }
+
+        function setMixMode(m) { mixMode = m; document.getElementById('mix-mode-bw').classList.toggle('bg-blue-600', m==='bw'); document.getElementById('mix-mode-auto').classList.toggle('bg-blue-600', m==='auto'); updateMix(); }
+
+        function copyContent(e, id) {
+            const ta = document.createElement("textarea"); ta.value = document.getElementById(id).innerText; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
+            const btn = e.currentTarget; const old = btn.innerText; btn.innerText = "COPIED!"; setTimeout(()=>btn.innerText = old, 1200);
+        }
+
         window.onload = () => {
-            updateMix(); updateContrast(); updateRule(); updateSemantic(); updateScale(); updateExplorer(); updateQuiet(); updateGlass(); updateGradient(); updateTypo(); updateShadow();
+            updateShift(); updateMix(); updateContrast(); updateRule(); updateSemantic(); updateScale(); updateExplorer(); updateQuiet(); updateGlass(); updateGradient(); updateTypo(); updateShadow();
         };
     </script>
 </body>
