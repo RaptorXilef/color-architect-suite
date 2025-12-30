@@ -48,7 +48,7 @@
 
         /* Grid for Glass Preview */
         .glass-bg-pattern {
-            background-image: radial-gradient(circle at 2px 2px, #334155 1px, transparent 0);
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.1) 1px, transparent 0);
             background-size: 24px 24px;
         }
     </style>
@@ -66,7 +66,7 @@
 
         <!-- Navigation -->
         <div class="overflow-x-auto w-full mb-12 no-scrollbar">
-            <nav class="flex min-w-max justify-start md:justify-center space-x-6 md:space-x-10 border-b border-slate-800">
+            <nav class="flex min-w-max justify-start md:justify-center space-x-4 md:space-x-8 border-b border-slate-800">
                 <button onclick="showTab('mix')" id="tab-mix" class="tab-btn active">Mix Analyzer</button>
                 <button onclick="showTab('contrast')" id="tab-contrast" class="tab-btn">WCAG & YIQ</button>
                 <button onclick="showTab('rule')" id="tab-rule" class="tab-btn">60-30-10 Rule</button>
@@ -75,6 +75,7 @@
                 <button onclick="showTab('explorer')" id="tab-explorer" class="tab-btn">Explorer</button>
                 <button onclick="showTab('quiet')" id="tab-quiet" class="tab-btn">Theme Architect</button>
                 <button onclick="showTab('glass')" id="tab-glass" class="tab-btn text-emerald-400">Glass Architect</button>
+                <button onclick="showTab('grad')" id="tab-grad" class="tab-btn text-orange-400">Gradient Lab</button>
             </nav>
         </div>
 
@@ -90,12 +91,12 @@
                             <div>
                                 <label class="block text-[11px] font-black uppercase text-slate-500 mb-3 tracking-widest">Basisfarbe (z.B. Primary)</label>
                                 <input type="color" id="mixBaseColor" value="#3b82f6" oninput="syncHex('mixBaseColor', 'mixBaseHex'); updateMix();">
-                                <input type="text" id="mixBaseHex" value="#3b82f6" onchange="syncColor('mixBaseHex', 'mixBaseColor'); updateMix();" class="mt-3">
+                                <input type="text" id="mixBaseHex" value="#3B82F6" onchange="syncColor('mixBaseHex', 'mixBaseColor'); updateMix();" class="mt-3">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-black uppercase text-slate-500 mb-3 tracking-widest">Ziel-Farbe (Alt-Design)</label>
                                 <input type="color" id="mixTargetColor" value="#1d4ed8" oninput="syncHex('mixTargetColor', 'mixTargetHex'); updateMix();">
-                                <input type="text" id="mixTargetHex" value="#1d4ed8" onchange="syncColor('mixTargetHex', 'mixTargetColor'); updateMix();" class="mt-3">
+                                <input type="text" id="mixTargetHex" value="#1D4ED8" onchange="syncColor('mixTargetHex', 'mixTargetColor'); updateMix();" class="mt-3">
                             </div>
                         </div>
                     </div>
@@ -105,7 +106,7 @@
                             <button class="copy-btn" onclick="copyContent(event, 'mixOutput')">Copy</button>
                             <code id="mixOutput">mix(black, $brand-primary, 15%)</code>
                         </div>
-                        <p class="mt-8 text-slate-400 text-sm italic">Berechnet, wie viel % Weiß oder Schwarz in deine Basisfarbe gemischt werden muss, um das Alt-Ergebnis zu erhalten.</p>
+                        <p class="mt-8 text-slate-400 text-sm italic">Berechnet das prozentuale Mischverhältnis für ein prozedurales System.</p>
                     </div>
                 </div>
             </div>
@@ -121,17 +122,17 @@
                                 <input type="color" id="conBgColor" value="#3b82f6" oninput="updateContrast();">
                             </div>
                             <div class="pt-8 border-t border-slate-700 grid grid-cols-2 gap-6">
-                                <div><label class="block text-[10px] font-bold text-slate-500 mb-2">Text Dunkel</label><input type="color" id="conDarkText" value="#0f172a" oninput="updateContrast();"></div>
-                                <div><label class="block text-[10px] font-bold text-slate-500 mb-2">Text Hell</label><input type="color" id="conLightText" value="#f8fafc" oninput="updateContrast();"></div>
+                                <div><label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Dark Text</label><input type="color" id="conDarkText" value="#0f172a" oninput="updateContrast();"></div>
+                                <div><label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Light Text</label><input type="color" id="conLightText" value="#f8fafc" oninput="updateContrast();"></div>
                             </div>
                         </div>
                     </div>
                     <div class="card overflow-hidden flex flex-col shadow-2xl">
                         <div id="conPreview" class="flex-grow p-16 flex flex-col items-center justify-center text-center transition-all duration-500">
-                            <h3 id="conPreviewText" class="text-4xl font-black mb-4 tracking-tighter uppercase text-white">Vorschau</h3>
+                            <h3 id="conPreviewText" class="text-4xl font-black mb-4 tracking-tighter uppercase">Vorschau</h3>
                             <p id="ratioRes" class="text-xl font-mono font-bold"></p>
                         </div>
-                        <div id="wcagBadge" class="p-4 text-center text-xs font-black uppercase tracking-widest text-white">Check...</div>
+                        <div id="wcagBadge" class="p-4 text-center text-xs font-black uppercase tracking-widest text-white">Ratio Check</div>
                     </div>
                 </div>
             </div>
@@ -142,8 +143,8 @@
                     <div class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
                         <h2 class="text-2xl font-bold">📐 Prozeduraler Designer</h2>
                         <div class="flex p-1.5 bg-slate-900 rounded-xl border border-slate-700">
-                            <button onclick="setRuleMode('light')" id="rule-l" class="px-6 py-2 text-[11px] font-black rounded-lg uppercase transition-all">Light</button>
-                            <button onclick="setRuleMode('dark')" id="rule-d" class="px-6 py-2 text-[11px] font-black rounded-lg uppercase transition-all ml-2 bg-blue-600">Dark</button>
+                            <button onclick="setRuleMode('light')" id="rule-l" class="px-6 py-2 text-[11px] font-black rounded-lg uppercase">Light</button>
+                            <button onclick="setRuleMode('dark')" id="rule-d" class="px-6 py-2 text-[11px] font-black rounded-lg uppercase ml-2 bg-blue-600">Dark</button>
                         </div>
                     </div>
                     <div class="grid md:grid-cols-3 gap-12">
@@ -153,9 +154,7 @@
                         </div>
                         <div class="md:col-span-2 space-y-8">
                             <div class="h-32 rounded-2xl flex overflow-hidden shadow-2xl border border-slate-800" id="ruleBar"></div>
-                            <div class="code-block text-blue-300">
-                                <pre id="ruleOutput" class="text-xs"></pre>
-                            </div>
+                            <div class="code-block text-blue-300"><pre id="ruleOutput" class="text-xs"></pre></div>
                         </div>
                     </div>
                 </div>
@@ -171,9 +170,7 @@
                     </div>
                     <div class="md:col-span-2 card p-10">
                         <div class="grid grid-cols-2 gap-6" id="semContainer"></div>
-                        <div class="code-block mt-8 text-emerald-400">
-                            <pre id="semOutput" class="text-xs"></pre>
-                        </div>
+                        <div class="code-block mt-8 text-emerald-400"><pre id="semOutput" class="text-xs"></pre></div>
                     </div>
                 </div>
             </div>
@@ -221,7 +218,7 @@
                         <h2 class="text-2xl font-bold text-emerald-400 mb-8">🌿 Theme Architect</h2>
                         <div class="space-y-8">
                             <div>
-                                <label class="block text-[11px] font-black uppercase text-slate-500 mb-3 tracking-widest">Hauptfarbe (Basis)</label>
+                                <label class="block text-[11px] font-black uppercase text-slate-500 mb-3 tracking-widest">Basis Farbe</label>
                                 <input type="color" id="quietBase" value="#0A192F" oninput="updateQuiet();">
                             </div>
                             <div class="flex p-1.5 bg-slate-900 rounded-xl border border-slate-800">
@@ -231,61 +228,83 @@
                         </div>
                     </div>
                     <div class="md:col-span-2 space-y-8">
-                        <!-- UI PREVIEW -->
                         <div id="uiPreview" class="rounded-3xl p-8 flex border transition-all duration-500 shadow-2xl relative overflow-hidden" style="min-height: 250px;">
                             <div id="uiSidebar" class="w-1/3 rounded-2xl p-4 border transition-all duration-500 mr-6">
                                 <div class="w-full h-4 rounded-full opacity-20 mb-3 bg-current"></div>
                                 <div class="w-2/3 h-4 rounded-full opacity-10 bg-current"></div>
                             </div>
                             <div id="uiContent" class="flex-1 rounded-2xl p-6 border transition-all duration-500 relative">
-                                <h4 class="font-bold text-lg mb-4">UI Preview</h4>
+                                <h4 class="font-bold text-lg mb-4 uppercase tracking-tighter">UI Elements</h4>
                                 <div class="w-full h-24 rounded-xl mb-4 bg-current opacity-5 border border-current"></div>
                             </div>
                         </div>
-                        <div class="code-block text-emerald-300">
-                            <button class="copy-btn" onclick="copyContent(event, 'quietOutput')">Copy Theme</button>
-                            <pre id="quietOutput" class="text-xs"></pre>
-                        </div>
+                        <div class="code-block text-emerald-300"><button class="copy-btn" onclick="copyContent(event, 'quietOutput')">Copy</button><pre id="quietOutput" class="text-xs"></pre></div>
                     </div>
                 </div>
             </div>
 
-            <!-- 8. GLASS ARCHITECT (NEW) -->
+            <!-- 8. GLASS ARCHITECT (OPTIMIERT) -->
             <div id="panel-glass" class="tab-panel hidden">
                 <div class="grid md:grid-cols-3 gap-8">
                     <div class="card p-10">
-                        <h2 class="text-2xl font-bold text-emerald-400 mb-8">💎 Glass Architect</h2>
+                        <h2 class="text-2xl font-bold text-emerald-400 mb-8 uppercase">💎 Glass Architect</h2>
                         <div class="space-y-8">
                             <div>
-                                <label class="block text-[11px] font-black uppercase text-slate-500 mb-3 tracking-widest">Hintergrund-Kontext</label>
+                                <label class="block text-[11px] font-black uppercase text-slate-500 mb-3 tracking-widest">Hintergrund-Farbe (Kontext)</label>
                                 <input type="color" id="glassBg" value="#0f172a" oninput="updateGlass();">
                             </div>
                             <div>
-                                <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase tracking-tighter">Deckkraft: <span id="glassOpacityVal">20%</span></label>
+                                <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Deckkraft: <span id="glassOpacityVal">20%</span></label>
                                 <input type="range" id="glassOpacity" min="5" max="60" step="5" value="20" oninput="updateGlass();" class="custom-range">
                             </div>
                             <div>
-                                <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase tracking-tighter">Blur (Weichzeichnung): <span id="glassBlurVal">12px</span></label>
+                                <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Blur: <span id="glassBlurVal">12px</span></label>
                                 <input type="range" id="glassBlur" min="0" max="40" step="1" value="12" oninput="updateGlass();" class="custom-range">
                             </div>
-                            <p class="text-xs text-slate-400 leading-relaxed italic border-t border-slate-700 pt-6">
-                                Berechnet die ideale Rahmenfarbe (Border Tint) durch mathematisches Mischen des Hintergrunds mit Weiß.
-                            </p>
                         </div>
                     </div>
                     <div class="md:col-span-2 space-y-8">
                         <!-- GLASS PREVIEW -->
-                        <div class="rounded-3xl p-16 glass-bg-pattern flex items-center justify-center relative overflow-hidden border border-slate-800 shadow-2xl" style="min-height: 350px;">
-                            <div id="glassPreviewPane" class="w-full max-w-sm p-8 rounded-3xl border transition-all duration-300 flex flex-col items-center">
-                                <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-emerald-400 to-blue-500 mb-6 shadow-lg"></div>
-                                <h4 class="text-xl font-black tracking-tight mb-2">Frosted Glass</h4>
-                                <p class="text-xs opacity-60 text-center leading-relaxed">Mathematisch korrekte Reflektion und Rahmenfarbe.</p>
+                        <div id="glassPreviewContainer" class="rounded-3xl p-16 glass-bg-pattern flex items-center justify-center relative overflow-hidden border border-slate-800 shadow-2xl transition-colors duration-500" style="min-height: 400px;">
+                            <!-- Floating decorative element to see blur -->
+                            <div class="absolute w-32 h-32 rounded-full bg-gradient-to-tr from-emerald-400 to-blue-500 blur-xl opacity-60 animate-pulse" style="top: 20%; left: 20%;"></div>
+                            <div class="absolute w-48 h-48 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 blur-2xl opacity-40" style="bottom: 10%; right: 15%;"></div>
+                            
+                            <div id="glassPreviewPane" class="w-full max-w-sm p-10 rounded-3xl border transition-all duration-300 relative z-10">
+                                <h4 class="text-2xl font-black tracking-tight mb-4 uppercase">Frosted Glass</h4>
+                                <p class="text-sm opacity-70 leading-relaxed">Der Rahmen und die Spiegelung passen sich mathematisch deinem Hintergrund an.</p>
                             </div>
                         </div>
-                        <div class="code-block text-emerald-300">
-                            <button class="copy-btn" onclick="copyContent(event, 'glassOutput')">Copy CSS</button>
-                            <pre id="glassOutput" class="text-xs"></pre>
+                        <div class="code-block text-emerald-300"><button class="copy-btn" onclick="copyContent(event, 'glassOutput')">Copy</button><pre id="glassOutput" class="text-xs"></pre></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 9. GRADIENT LAB (NEU) -->
+            <div id="panel-grad" class="tab-panel hidden">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="card p-10">
+                        <h2 class="text-2xl font-bold text-orange-400 mb-8 uppercase">🔥 Gradient Lab</h2>
+                        <div class="space-y-8">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase text-center">Start</label><input type="color" id="gradStart" value="#3b82f6" oninput="updateGradient();"></div>
+                                <div><label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase text-center">Ende</label><input type="color" id="gradEnd" value="#10b981" oninput="updateGradient();"></div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Winkel: <span id="gradAngleVal">135deg</span></label>
+                                <input type="range" id="gradAngle" min="0" max="360" step="15" value="135" oninput="updateGradient();" class="custom-range">
+                            </div>
+                            <div class="flex items-center space-x-2 p-3 bg-slate-900 rounded-lg">
+                                <input type="checkbox" id="gradSoft" onchange="updateGradient();" class="w-4 h-4 bg-slate-800 border-slate-700">
+                                <label for="gradSoft" class="text-xs font-bold text-slate-400 uppercase tracking-tighter">Soft Transition (Mid-Point Fix)</label>
+                            </div>
                         </div>
+                    </div>
+                    <div class="md:col-span-2 space-y-8">
+                        <div id="gradPreview" class="rounded-3xl h-64 shadow-2xl border border-slate-800 transition-all duration-500 flex items-center justify-center">
+                            <span class="text-white font-black text-3xl uppercase tracking-tighter opacity-20">Preview Area</span>
+                        </div>
+                        <div class="code-block text-emerald-300"><button class="copy-btn" onclick="copyContent(event, 'gradOutput')">Copy</button><pre id="gradOutput" class="text-xs"></pre></div>
                     </div>
                 </div>
             </div>
@@ -356,7 +375,7 @@
             const el = document.getElementById(id);
             if(!el) return;
             const ta = document.createElement("textarea"); ta.value = el.innerText; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
-            const btn = e.currentTarget; const old = btn.innerText; btn.innerText = "Copied!"; setTimeout(()=>btn.innerText = old, 1200);
+            const btn = e.currentTarget; const old = btn.innerText; btn.innerText = "COPIED!"; setTimeout(()=>btn.innerText = old, 1200);
         }
 
         // --- UPDATERS ---
@@ -385,9 +404,7 @@
                 document.getElementById('conPreviewText').style.color = txtHex;
                 document.getElementById('ratioRes').innerText = `${ratio} : 1`;
                 const badge = document.getElementById('wcagBadge');
-                if (ratio >= 7) {badge.innerText = "AAA - EXZELLENT";}
-                else if (ratio >= 4.5) {badge.innerText = "AA - BESTANDEN";}
-                else {badge.innerText = "KRITISCH";}
+                badge.innerText = ratio >= 7 ? "AAA - EXZELLENT" : ratio >= 4.5 ? "AA - BESTANDEN" : "KRITISCH";
                 badge.style.backgroundColor = ratio >= 4.5 ? "#10b981" : "#ef4444";
             }
         }
@@ -403,8 +420,8 @@
             if(bar) {
                 bar.innerHTML = `<div style="width:60%; background:${b}"></div><div style="width:30%; background:${s}"></div><div style="width:10%; background:${accIn.value}"></div>`;
                 document.getElementById('ruleOutput').innerText = `$base: ${b};\n$secondary: ${s};\n$accent: ${accIn.value};`;
-                document.getElementById('rule-l').classList.toggle('bg-blue-600', ruleMode==='light');
-                document.getElementById('rule-d').classList.toggle('bg-blue-600', ruleMode==='dark');
+                document.getElementById('rule-l').className = ruleMode==='light' ? 'flex-1 py-2 text-[10px] font-black rounded-lg uppercase bg-blue-600' : 'flex-1 py-2 text-[10px] font-black rounded-lg uppercase ml-2';
+                document.getElementById('rule-d').className = ruleMode==='dark' ? 'flex-1 py-2 text-[10px] font-black rounded-lg uppercase bg-blue-600' : 'flex-1 py-2 text-[10px] font-black rounded-lg uppercase ml-2';
             }
         }
 
@@ -476,65 +493,43 @@
             if(!bIn) return;
             const bg = hexToRgb(bIn.value);
             const isDark = themeMode === 'dark';
-
             document.getElementById('tm-l').classList.toggle('bg-blue-600', !isDark);
             document.getElementById('tm-d').classList.toggle('bg-blue-600', isDark);
-
             let surf, side, bord, shad, txt = isDark ? "#FFFFFF" : "#0F172A";
-            if(isDark) {
-                surf = mix({r:255,g:255,b:255}, bg, 0.05);
-                side = mix({r:0,g:0,b:0}, bg, 0.15);
-                bord = mix({r:255,g:255,b:255}, bg, 0.15);
-                shad = mix({r:0,g:0,b:0}, bg, 0.40);
-            } else {
-                surf = mix({r:0,g:0,b:0}, bg, 0.03);
-                side = mix({r:0,g:0,b:0}, bg, 0.08);
-                bord = mix({r:0,g:0,b:0}, bg, 0.12);
-                shad = mix({r:0,g:0,b:0}, bg, 0.10);
-            }
-
-            const prev = document.getElementById('uiPreview');
-            if(prev) {
-                prev.style.backgroundColor = bIn.value; prev.style.color = txt; prev.style.borderColor = bord.hex;
-                document.getElementById('uiSidebar').style.backgroundColor = side.hex;
-                document.getElementById('uiSidebar').style.borderColor = bord.hex;
-                document.getElementById('uiContent').style.backgroundColor = surf.hex;
-                document.getElementById('uiContent').style.borderColor = bord.hex;
+            if(isDark) { surf = mix({r:255,g:255,b:255}, bg, 0.05); side = mix({r:0,g:0,b:0}, bg, 0.15); bord = mix({r:255,g:255,b:255}, bg, 0.15); shad = mix({r:0,g:0,b:0}, bg, 0.40); } 
+            else { surf = mix({r:0,g:0,b:0}, bg, 0.03); side = mix({r:0,g:0,b:0}, bg, 0.08); bord = mix({r:0,g:0,b:0}, bg, 0.12); shad = mix({r:0,g:0,b:0}, bg, 0.10); }
+            const p = document.getElementById('uiPreview');
+            if(p) { p.style.backgroundColor = bIn.value; p.style.color = txt; p.style.borderColor = bord.hex;
+                document.getElementById('uiSidebar').style.backgroundColor = side.hex; document.getElementById('uiSidebar').style.borderColor = bord.hex;
+                document.getElementById('uiContent').style.backgroundColor = surf.hex; document.getElementById('uiContent').style.borderColor = bord.hex;
                 document.getElementById('uiContent').style.boxShadow = `10px 10px 30px ${shad.hex}`;
-                document.getElementById('quietOutput').innerText =
-`// Theme Architect: ${themeMode.toUpperCase()}
-$theme-bg:      ${bIn.value};
-$theme-surface: ${surf.hex};
-$theme-sidebar: ${side.hex};
-$theme-border:  ${bord.hex};
-$theme-shadow:  ${shad.hex};
-$theme-text:    ${txt};`;
+                document.getElementById('quietOutput').innerText = `$theme-bg: ${bIn.value};\n$theme-surface: ${surf.hex};\n$theme-sidebar: ${side.hex};\n$theme-border: ${bord.hex};`;
             }
         }
 
-        // --- NEW: GLASS ARCHITECT ---
+        // --- GLASS ARCHITECT FIX ---
         function updateGlass() {
             const bgHex = document.getElementById('glassBg').value;
             const op = document.getElementById('glassOpacity').value / 100;
             const blur = document.getElementById('glassBlur').value;
             const bg = hexToRgb(bgHex);
-            
             document.getElementById('glassOpacityVal').innerText = (op*100) + "%";
             document.getElementById('glassBlurVal').innerText = blur + "px";
+            
+            // Set context background
+            document.getElementById('glassPreviewContainer').style.backgroundColor = bgHex;
 
             const isLight = getYIQ(bg) >= 128;
-            
-            // Border Tint: Mix background with white/black to get harmonious border
             const tintBase = isLight ? {r:0,g:0,b:0} : {r:255,g:255,b:255};
-            const borderRgb = mix(bg, tintBase, 0.7); // 30% white/black tint
-            const borderRgba = `rgba(${borderRgb.r}, ${borderRgb.g}, ${borderRgb.b}, 0.4)`;
-            
+            const borderRgb = mix(bg, tintBase, 0.8);
+            const borderRgba = `rgba(${borderRgb.r}, ${borderRgb.g}, ${borderRgb.b}, 0.3)`;
             const paneRgba = isLight ? `rgba(255, 255, 255, ${op})` : `rgba(15, 23, 42, ${op})`;
             const text = isLight ? "#000" : "#fff";
 
             const pane = document.getElementById('glassPreviewPane');
             pane.style.background = paneRgba;
             pane.style.backdropFilter = `blur(${blur}px)`;
+            pane.style.webkitBackdropFilter = `blur(${blur}px)`;
             pane.style.borderColor = borderRgba;
             pane.style.color = text;
 
@@ -542,16 +537,35 @@ $theme-text:    ${txt};`;
 `.glass-card {
   background: ${paneRgba};
   backdrop-filter: blur(${blur}px);
-  -webkit-backdrop-filter: blur(${blur}px);
   border: 1px solid ${borderRgba};
-  border-radius: 24px;
   color: ${text};
 }`;
         }
 
+        // --- GRADIENT LAB ---
+        function updateGradient() {
+            const start = document.getElementById('gradStart').value;
+            const end = document.getElementById('gradEnd').value;
+            const angle = document.getElementById('gradAngle').value;
+            const soft = document.getElementById('gradSoft').checked;
+            document.getElementById('gradAngleVal').innerText = angle + "deg";
+
+            const sRgb = hexToRgb(start), eRgb = hexToRgb(end);
+            let css;
+            if(soft) {
+                const mid = mix(sRgb, eRgb, 0.5);
+                css = `linear-gradient(${angle}deg, ${start} 0%, ${mid.hex} 50%, ${end} 100%)`;
+            } else {
+                css = `linear-gradient(${angle}deg, ${start}, ${end})`;
+            }
+
+            document.getElementById('gradPreview').style.background = css;
+            document.getElementById('gradOutput').innerText = `background: ${css};`;
+        }
+
         // --- INIT ---
         window.onload = () => {
-            updateMix(); updateContrast(); setRuleMode('dark'); updateSemantic(); setScaleType('mono'); updateExplorer(); setThemeMode('dark'); updateGlass();
+            updateMix(); updateContrast(); setRuleMode('dark'); updateSemantic(); setScaleType('mono'); updateExplorer(); setThemeMode('dark'); updateGlass(); updateGradient();
         };
     </script>
 </body>
