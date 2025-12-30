@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Felix Maywald / RaptorXilef">
     <meta name="copyright" content="© [2025] Felix Maywald">
-    <!-- Quelle (GitHub-Repository) -->
-    <!-- Quelle: https://github.com/RaptorXilef/color-architect-suite -->
-    <title>Color Architect Suite</title>
+    <title>Color Architect Suite - Ultimate Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Fira+Code:wght@400;500&display=swap');
@@ -129,7 +127,7 @@
                     </div>
                     <div class="card overflow-hidden flex flex-col shadow-2xl">
                         <div id="conPreview" class="flex-grow p-16 flex flex-col items-center justify-center text-center transition-all duration-500">
-                            <h3 id="conPreviewText" class="text-4xl font-black mb-4 tracking-tighter uppercase">Vorschau</h3>
+                            <h3 id="conPreviewText" class="text-4xl font-black mb-4 tracking-tighter uppercase text-white">Vorschau</h3>
                             <p id="ratioRes" class="text-xl font-mono font-bold"></p>
                         </div>
                         <div id="wcagBadge" class="p-4 text-center text-xs font-black uppercase tracking-widest text-white">Ratio Check</div>
@@ -143,8 +141,8 @@
                     <div class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
                         <h2 class="text-2xl font-bold">📐 Prozeduraler Designer</h2>
                         <div class="flex p-1.5 bg-slate-900 rounded-xl border border-slate-700">
-                            <button onclick="setRuleMode('light')" id="rule-l" class="px-6 py-2 text-[11px] font-black rounded-lg uppercase">Light</button>
-                            <button onclick="setRuleMode('dark')" id="rule-d" class="px-6 py-2 text-[11px] font-black rounded-lg uppercase ml-2 bg-blue-600">Dark</button>
+                            <button onclick="setRuleMode('light')" id="rule-l" class="px-6 py-2 text-[11px] font-black rounded-lg uppercase transition-all">Light</button>
+                            <button onclick="setRuleMode('dark')" id="rule-d" class="px-6 py-2 text-[11px] font-black rounded-lg uppercase transition-all ml-2 bg-blue-600">Dark</button>
                         </div>
                     </div>
                     <div class="grid md:grid-cols-3 gap-12">
@@ -243,36 +241,46 @@
                 </div>
             </div>
 
-            <!-- 8. GLASS ARCHITECT (OPTIMIERT) -->
+            <!-- 8. GLASS ARCHITECT (OPTIMIERT MIT BILD-TEST) -->
             <div id="panel-glass" class="tab-panel hidden">
                 <div class="grid md:grid-cols-3 gap-8">
                     <div class="card p-10">
                         <h2 class="text-2xl font-bold text-emerald-400 mb-8 uppercase">💎 Glass Architect</h2>
-                        <div class="space-y-8">
+                        <div class="space-y-6">
                             <div>
-                                <label class="block text-[11px] font-black uppercase text-slate-500 mb-3 tracking-widest">Hintergrund-Farbe (Kontext)</label>
-                                <input type="color" id="glassBg" value="#0f172a" oninput="updateGlass();">
+                                <label class="block text-[11px] font-black uppercase text-slate-500 mb-3 tracking-widest">Mathe-Kontext (Border Tint)</label>
+                                <input type="color" id="glassContext" value="#0f172a" oninput="updateGlass();">
                             </div>
                             <div>
-                                <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Deckkraft: <span id="glassOpacityVal">20%</span></label>
-                                <input type="range" id="glassOpacity" min="5" max="60" step="5" value="20" oninput="updateGlass();" class="custom-range">
+                                <label class="block text-[11px] font-black uppercase text-slate-500 mb-3 tracking-widest">Vorschau-Hintergrund</label>
+                                <input type="color" id="glassVisualBg" value="#1e293b" oninput="updateGlass();">
                             </div>
                             <div>
-                                <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Blur: <span id="glassBlurVal">12px</span></label>
-                                <input type="range" id="glassBlur" min="0" max="40" step="1" value="12" oninput="updateGlass();" class="custom-range">
+                                <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Optionales Testbild</label>
+                                <input type="file" id="glassImageInput" accept="image/*" onchange="handleGlassImage(this)" class="block w-full text-[10px] text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-slate-700 file:text-slate-300 hover:file:bg-slate-600">
+                                <button onclick="clearGlassImage()" class="mt-2 text-[9px] font-bold text-red-400 uppercase tracking-widest">Bild entfernen</button>
+                            </div>
+                            <div class="pt-4 border-t border-slate-700 space-y-6">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Deckkraft: <span id="glassOpacityVal">20%</span></label>
+                                    <input type="range" id="glassOpacity" min="5" max="60" step="5" value="20" oninput="updateGlass();" class="custom-range">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Blur: <span id="glassBlurVal">12px</span></label>
+                                    <input type="range" id="glassBlur" min="0" max="40" step="1" value="12" oninput="updateGlass();" class="custom-range">
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="md:col-span-2 space-y-8">
-                        <!-- GLASS PREVIEW -->
-                        <div id="glassPreviewContainer" class="rounded-3xl p-16 glass-bg-pattern flex items-center justify-center relative overflow-hidden border border-slate-800 shadow-2xl transition-colors duration-500" style="min-height: 400px;">
-                            <!-- Floating decorative element to see blur -->
-                            <div class="absolute w-32 h-32 rounded-full bg-gradient-to-tr from-emerald-400 to-blue-500 blur-xl opacity-60 animate-pulse" style="top: 20%; left: 20%;"></div>
-                            <div class="absolute w-48 h-48 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 blur-2xl opacity-40" style="bottom: 10%; right: 15%;"></div>
+                        <!-- GLASS PREVIEW CONTAINER -->
+                        <div id="glassPreviewContainer" class="rounded-3xl p-16 glass-bg-pattern flex items-center justify-center relative overflow-hidden border border-slate-800 shadow-2xl bg-cover bg-center transition-all duration-500" style="min-height: 450px;">
+                            <!-- Floating decorative element -->
+                            <div class="absolute w-32 h-32 rounded-full bg-gradient-to-tr from-emerald-400 to-blue-500 blur-xl opacity-60 animate-pulse" style="top: 15%; left: 10%;"></div>
                             
-                            <div id="glassPreviewPane" class="w-full max-w-sm p-10 rounded-3xl border transition-all duration-300 relative z-10">
+                            <div id="glassPreviewPane" class="w-full max-w-sm p-12 rounded-3xl border transition-all duration-300 relative z-10 text-center">
                                 <h4 class="text-2xl font-black tracking-tight mb-4 uppercase">Frosted Glass</h4>
-                                <p class="text-sm opacity-70 leading-relaxed">Der Rahmen und die Spiegelung passen sich mathematisch deinem Hintergrund an.</p>
+                                <p class="text-sm opacity-80 leading-relaxed">Der Rahmen wird prozedural basierend auf der Kontext-Farbe berechnet.</p>
                             </div>
                         </div>
                         <div class="code-block text-emerald-300"><button class="copy-btn" onclick="copyContent(event, 'glassOutput')">Copy</button><pre id="glassOutput" class="text-xs"></pre></div>
@@ -280,7 +288,7 @@
                 </div>
             </div>
 
-            <!-- 9. GRADIENT LAB (NEU) -->
+            <!-- 9. GRADIENT LAB -->
             <div id="panel-grad" class="tab-panel hidden">
                 <div class="grid md:grid-cols-3 gap-8">
                     <div class="card p-10">
@@ -321,9 +329,21 @@
         // --- MATH HELPERS ---
         const hexToRgb = (hex) => {
             const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            return r ? { r: parseInt(r[1], 16), g: parseInt(r[2], 16), b: parseInt(r[3], 16) } : null;
+            return r ? { r: parseInt(result ? result[1] : 0, 16), g: parseInt(result ? result[2] : 0, 16), b: parseInt(result ? result[3] : 0, 16) } : {r:0,g:0,b:0};
         };
+
+        // Improved hexToRgb to be safer
+        function safeHexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : {r: 0, g: 0, b: 0};
+        }
+
         const rgbToHex = (r, g, b) => "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        
         const mix = (c1, c2, weight) => {
             const r = Math.round(c1.r * weight + c2.r * (1 - weight));
             const g = Math.round(c1.g * weight + c2.g * (1 - weight));
@@ -382,8 +402,7 @@
         function updateMix() {
             const bIn = document.getElementById('mixBaseColor'), tIn = document.getElementById('mixTargetColor');
             if(!bIn || !tIn) return;
-            const b = hexToRgb(bIn.value), t = hexToRgb(tIn.value);
-            if(!b || !t) return;
+            const b = safeHexToRgb(bIn.value), t = safeHexToRgb(tIn.value);
             const bAvg = (b.r + b.g + b.b)/3, tAvg = (t.r + t.g + t.b)/3;
             let partner = tAvg > bAvg ? {r:255, g:255, b:255, name:'white'} : {r:0, g:0, b:0, name:'black'};
             const ds = [(t.r-b.r)/(partner.r-b.r), (t.g-b.g)/(partner.g-b.g), (t.b-b.b)/(partner.b-b.b)].filter(v=>isFinite(v)&&!isNaN(v));
@@ -394,7 +413,7 @@
         function updateContrast() {
             const bgIn = document.getElementById('conBgColor'), darkIn = document.getElementById('conDarkText'), lightIn = document.getElementById('conLightText');
             if(!bgIn || !darkIn || !lightIn) return;
-            const bg = hexToRgb(bgIn.value), dark = hexToRgb(darkIn.value), light = hexToRgb(lightIn.value);
+            const bg = safeHexToRgb(bgIn.value), dark = safeHexToRgb(darkIn.value), light = safeHexToRgb(lightIn.value);
             const isL = getYIQ(bg) >= 128;
             const txt = isL ? dark : light, txtHex = isL ? darkIn.value : lightIn.value;
             const ratio = getContrast(bg, txt).toFixed(2);
@@ -413,7 +432,7 @@
         function updateRule() {
             const accIn = document.getElementById('ruleAccent');
             if(!accIn) return;
-            const acc = hexToRgb(accIn.value);
+            const acc = safeHexToRgb(accIn.value);
             let b = ruleMode === 'light' ? "#F8FAFC" : "#0F172A";
             let s = ruleMode === 'light' ? mix(acc, {r:255,g:255,b:255}, 0.1).hex : mix(acc, {r:15,g:23,b:42}, 0.15).hex;
             const bar = document.getElementById('ruleBar');
@@ -428,7 +447,7 @@
         function updateSemantic() {
             const bIn = document.getElementById('semBase');
             if(!bIn) return;
-            const brand = hexToRgb(bIn.value);
+            const brand = safeHexToRgb(bIn.value);
             const states = [{n:'Info', c:{r:59,g:130,b:246}}, {n:'Success', c:{r:34,g:197,b:94}}, {n:'Warning', c:{r:234,g:179,b:8}}, {n:'Danger', c:{r:239,g:68,b:68}}];
             const cont = document.getElementById('semContainer');
             if(!cont) return;
@@ -448,7 +467,7 @@
         function updateScale() {
             const aIn = document.getElementById('scaleA'), bIn = document.getElementById('scaleB'), cIn = document.getElementById('scaleCount');
             if(!aIn || !bIn || !cIn) return;
-            const a = hexToRgb(aIn.value), b = hexToRgb(bIn.value), count = parseInt(cIn.value);
+            const a = safeHexToRgb(aIn.value), b = safeHexToRgb(bIn.value), count = parseInt(cIn.value);
             document.getElementById('scCountText').innerText = count;
             document.getElementById('sc-mono').classList.toggle('bg-blue-600', scaleType==='mono');
             document.getElementById('sc-duo').classList.toggle('bg-blue-600', scaleType==='duo');
@@ -469,7 +488,7 @@
         function updateExplorer() {
             const bIn = document.getElementById('expBase');
             if(!bIn) return;
-            const bg = hexToRgb(bIn.value), hsl = rgbToHsl(bg.r, bg.g, bg.b);
+            const bg = safeHexToRgb(bIn.value), hsl = rgbToHsl(bg.r, bg.g, bg.b);
             const res = document.getElementById('expResults');
             if(!res) return;
             res.innerHTML = '';
@@ -491,7 +510,7 @@
         function updateQuiet() {
             const bIn = document.getElementById('quietBase');
             if(!bIn) return;
-            const bg = hexToRgb(bIn.value);
+            const bg = safeHexToRgb(bIn.value);
             const isDark = themeMode === 'dark';
             document.getElementById('tm-l').classList.toggle('bg-blue-600', !isDark);
             document.getElementById('tm-d').classList.toggle('bg-blue-600', isDark);
@@ -507,24 +526,47 @@
             }
         }
 
-        // --- GLASS ARCHITECT FIX ---
+        // --- GLASS ARCHITECT (NEW & IMPROVED) ---
+        function handleGlassImage(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('glassPreviewContainer').style.backgroundImage = `url(${e.target.result})`;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearGlassImage() {
+            document.getElementById('glassPreviewContainer').style.backgroundImage = '';
+            document.getElementById('glassImageInput').value = '';
+        }
+
         function updateGlass() {
-            const bgHex = document.getElementById('glassBg').value;
+            const contextHex = document.getElementById('glassContext').value;
+            const visualBgHex = document.getElementById('glassVisualBg').value;
             const op = document.getElementById('glassOpacity').value / 100;
             const blur = document.getElementById('glassBlur').value;
-            const bg = hexToRgb(bgHex);
+            
+            const contextRgb = safeHexToRgb(contextHex);
+            const visualRgb = safeHexToRgb(visualBgHex);
+
             document.getElementById('glassOpacityVal').innerText = (op*100) + "%";
             document.getElementById('glassBlurVal').innerText = blur + "px";
             
-            // Set context background
-            document.getElementById('glassPreviewContainer').style.backgroundColor = bgHex;
+            // Set visual container background
+            document.getElementById('glassPreviewContainer').style.backgroundColor = visualBgHex;
 
-            const isLight = getYIQ(bg) >= 128;
-            const tintBase = isLight ? {r:0,g:0,b:0} : {r:255,g:255,b:255};
-            const borderRgb = mix(bg, tintBase, 0.8);
+            const isLightContext = getYIQ(contextRgb) >= 128;
+            
+            // Border Tint: Mix context with white/black to get harmonious border
+            const tintBase = isLightContext ? {r:0,g:0,b:0} : {r:255,g:255,b:255};
+            const borderRgb = mix(contextRgb, tintBase, 0.8);
             const borderRgba = `rgba(${borderRgb.r}, ${borderRgb.g}, ${borderRgb.b}, 0.3)`;
-            const paneRgba = isLight ? `rgba(255, 255, 255, ${op})` : `rgba(15, 23, 42, ${op})`;
-            const text = isLight ? "#000" : "#fff";
+            
+            // Pane background based on context for harmony
+            const paneRgba = isLightContext ? `rgba(255, 255, 255, ${op})` : `rgba(${contextRgb.r}, ${contextRgb.g}, ${contextRgb.b}, ${op})`;
+            const text = getYIQ(visualRgb) >= 128 ? "#000" : "#fff";
 
             const pane = document.getElementById('glassPreviewPane');
             pane.style.background = paneRgba;
@@ -537,7 +579,9 @@
 `.glass-card {
   background: ${paneRgba};
   backdrop-filter: blur(${blur}px);
+  -webkit-backdrop-filter: blur(${blur}px);
   border: 1px solid ${borderRgba};
+  border-radius: 24px;
   color: ${text};
 }`;
         }
@@ -550,7 +594,7 @@
             const soft = document.getElementById('gradSoft').checked;
             document.getElementById('gradAngleVal').innerText = angle + "deg";
 
-            const sRgb = hexToRgb(start), eRgb = hexToRgb(end);
+            const sRgb = safeHexToRgb(start), eRgb = safeHexToRgb(end);
             let css;
             if(soft) {
                 const mid = mix(sRgb, eRgb, 0.5);
