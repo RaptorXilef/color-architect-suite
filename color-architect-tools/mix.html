@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Felix Maywald / RaptorXilef">
+    <meta name="copyright" content="© [2025] Felixx Maywald">
+    <!-- Quelle (GitHub-Repository) -->
+    <!-- Quelle: https://github.com/RaptorXilef/color-architect-suite -->
+    <title>SCSS Mix Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; }
+        .card { background: #1e293b; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        input { background: #334155; border: 1px solid #475569; padding: 0.5rem; border-radius: 0.5rem; color: white; width: 100%; }
+    </style>
+</head>
+<body class="p-8 flex flex-col items-center">
+
+    <div class="card p-8 max-w-md w-full">
+        <h1 class="text-2xl font-bold mb-6 border-b border-slate-700 pb-2">🎨 SCSS Mix-Analyzer</h1>
+        <p class="text-sm text-slate-400 mb-6">Finde heraus, wie viel % Weiß oder Schwarz in deiner alten Farbe stecken.</p>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Deine Basisfarbe (z.B. Primary)</label>
+                <input type="color" id="baseColor" value="#0066ff" class="h-12 cursor-pointer">
+                <input type="text" id="baseHex" value="#0066ff" class="mt-2 text-center font-mono">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Deine Ziel-Farbe (Alt-Design)</label>
+                <input type="color" id="targetColor" value="#80b3ff" class="h-12 cursor-pointer">
+                <input type="text" id="targetHex" value="#80b3ff" class="mt-2 text-center font-mono">
+            </div>
+
+            <div id="resultBox" class="mt-8 p-4 bg-slate-900 rounded-lg hidden border border-blue-500/30">
+                <p class="text-xs text-blue-400 font-bold mb-2 uppercase">SCSS Code:</p>
+                <code id="scssOutput" class="text-lg text-white block break-all"></code>
+            </div>
+
+            <p id="errorMsg" class="text-red-400 text-sm italic hidden">Die Farben sind zu unterschiedlich (andere Farbtöne), um ein exaktes Mix-Ergebnis zu erhalten.</p>
+        </div>
+    </div>
+
+    <script>
+        const baseIn = document.getElementById('baseColor');
+        const targetIn = document.getElementById('targetColor');
+        const baseHexIn = document.getElementById('baseHex');
+        const targetHexIn = document.getElementById('targetHex');
+        const scssOutput = document.getElementById('scssOutput');
+        const resultBox = document.getElementById('resultBox');
+        const errorMsg = document.getElementById('errorMsg');
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function calculateMix() {
+            const base = hexToRgb(baseIn.value);
+            const target = hexToRgb(targetIn.value);
+
+            // Wir prüfen, ob die Ziel-Farbe eher heller (Weiß) oder dunkler (Schwarz) ist
+            const baseAvg = (base.r + base.g + base.b) / 3;
+            const targetAvg = (target.r + target.g + target.b) / 3;
+
+            let mixPartner = targetAvg > baseAvg ? {r:255, g:255, b:255, name:'white'} : {r:0, g:0, b:0, name:'black'};
+
+            // Berechnung des Prozentsatzes p: Target = Base * (1-p) + Partner * p
+            // => p = (Target - Base) / (Partner - Base)
+
+            const diffs = [
+                (target.r - base.r) / (mixPartner.r - base.r),
+                (target.g - base.g) / (mixPartner.g - base.g),
+                (target.b - base.b) / (mixPartner.b - base.b)
+            ].filter(v => !isNaN(v) && isFinite(v));
+
+            const avgP = diffs.length > 0 ? diffs.reduce((a,b) => a+b) / diffs.length : 0;
+            const finalP = Math.max(0, Math.min(100, Math.round(avgP * 100)));
+
+            if (finalP >= 0) {
+                resultBox.classList.remove('hidden');
+                errorMsg.classList.add('hidden');
+                scssOutput.innerText = `mix(${mixPartner.name}, $base-color, ${finalP}%)`;
+            } else {
+                resultBox.classList.add('hidden');
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        [baseIn, targetIn].forEach(el => el.addEventListener('input', (e) => {
+            if(e.target === baseIn) baseHexIn.value = baseIn.value;
+            if(e.target === targetIn) targetHexIn.value = targetIn.value;
+            calculateMix();
+        }));
+
+        [baseHexIn, targetHexIn].forEach(el => el.addEventListener('change', (e) => {
+            if(e.target === baseHexIn) baseIn.value = baseHexIn.value;
+            if(e.target === targetHexIn) targetIn.value = targetHexIn.value;
+            calculateMix();
+        }));
+
+        calculateMix();
+    </script>
+</body>
+</html>
