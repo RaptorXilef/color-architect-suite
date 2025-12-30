@@ -21,15 +21,18 @@
 
         input[type="text"], input[type="number"], select { background: #0f172a; border: 1px solid #334155; padding: 0.5rem; border-radius: 0.5rem; color: white; width: 100%; text-align: center; font-family: 'Fira Code', monospace; font-size: 0.875rem; }
 
-        .tab-btn { transition: all 0.2s; border-bottom: 2px solid transparent; white-space: nowrap; }
+        .tab-btn { transition: all 0.2s; border-bottom: 2px solid transparent; white-space: nowrap; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding-bottom: 0.75rem; color: #64748b; }
         .tab-btn.active { border-bottom: 2px solid #3b82f6; color: #3b82f6; background: rgba(59, 130, 246, 0.05); }
 
-        .code-block { background: #0a0f1e; border-radius: 0.5rem; padding: 1rem; font-family: 'Fira Code', monospace; font-size: 0.8rem; border: 1px solid #1e293b; position: relative; }
-        .copy-btn { position: absolute; top: 0.5rem; right: 0.5rem; background: #334155; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.7rem; cursor: pointer; }
-        .copy-btn:hover { background: #475569; }
+        .code-block { background: #0a0f1e; border-radius: 0.5rem; padding: 1rem; font-family: 'Fira Code', monospace; font-size: 0.75rem; border: 1px solid #1e293b; position: relative; overflow-x: auto; }
+        .copy-btn { position: absolute; top: 0.5rem; right: 0.5rem; background: #334155; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-size: 0.6rem; cursor: pointer; color: #94a3b8; }
+        .copy-btn:hover { background: #475569; color: white; }
 
         .custom-range { -webkit-appearance: none; width: 100%; height: 6px; background: #334155; border-radius: 5px; outline: none; }
         .custom-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; background: #3b82f6; cursor: pointer; border-radius: 50%; border: 2px solid #f8fafc; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="p-4 md:p-8 flex flex-col items-center">
@@ -40,185 +43,183 @@
             <h1 class="text-4xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-emerald-400">
                 COLOR ARCHITECT SUITE
             </h1>
-            <p class="text-slate-400 mt-2 text-md">Design-System-Engineering & Prozedurale Farbmetrik</p>
+            <p class="text-slate-400 mt-2 text-md">System-Engineering & Prozedurale Farbmetrik</p>
         </header>
 
         <!-- Tabs Navigation -->
         <div class="overflow-x-auto w-full mb-8 no-scrollbar">
-            <nav class="flex min-w-max justify-center space-x-4 md:space-x-8 border-b border-slate-800">
-                <button onclick="showTab('mix')" id="tab-mix" class="tab-btn px-3 pb-3 font-bold active uppercase text-[10px] tracking-widest">Mix Analyzer</button>
-                <button onclick="showTab('contrast')" id="tab-contrast" class="tab-btn px-3 pb-3 font-bold uppercase text-[10px] tracking-widest">WCAG & YIQ</button>
-                <button onclick="showTab('rule')" id="tab-rule" class="tab-btn px-3 pb-3 font-bold uppercase text-[10px] tracking-widest">60-30-10</button>
-                <button onclick="showTab('semantic')" id="tab-semantic" class="tab-btn px-3 pb-3 font-bold uppercase text-[10px] tracking-widest">UI Semantic</button>
-                <button onclick="showTab('scale')" id="tab-scale" class="tab-btn px-3 pb-3 font-bold uppercase text-[10px] tracking-widest">Multi-Scale</button>
-                <button onclick="showTab('explorer')" id="tab-explorer" class="tab-btn px-3 pb-3 font-bold uppercase text-[10px] tracking-widest">Explorer</button>
+            <nav class="flex min-w-max justify-start md:justify-center space-x-4 md:space-x-8 border-b border-slate-800">
+                <button onclick="showTab('mix')" id="tab-mix" class="tab-btn active">Mix Analyzer</button>
+                <button onclick="showTab('contrast')" id="tab-contrast" class="tab-btn">WCAG & YIQ</button>
+                <button onclick="showTab('rule')" id="tab-rule" class="tab-btn">60-30-10</button>
+                <button onclick="showTab('semantic')" id="tab-semantic" class="tab-btn">UI Semantic</button>
+                <button onclick="showTab('scale')" id="tab-scale" class="tab-btn">Multi-Scale</button>
+                <button onclick="showTab('explorer')" id="tab-explorer" class="tab-btn">Explorer</button>
+                <button onclick="showTab('quiet')" id="tab-quiet" class="tab-btn text-emerald-400">Atmospheric UI</button>
             </nav>
         </div>
 
-        <!-- 1. MIX ANALYZER -->
-        <div id="panel-mix" class="tab-panel animate-in fade-in duration-500">
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="card p-8">
-                    <h2 class="text-xl font-bold mb-6 flex items-center"><span class="mr-2">🧪</span> SCSS Mix-Calculator</h2>
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Basisfarbe (z.B. Primary)</label>
-                            <input type="color" id="mixBaseColor" value="#3b82f6" oninput="syncHex('mixBaseColor', 'mixBaseHex'); updateMix();">
-                            <input type="text" id="mixBaseHex" value="#3b82f6" onchange="syncColor('mixBaseHex', 'mixBaseColor'); updateMix();" class="mt-2">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Ziel-Farbe (Legacy Wert)</label>
-                            <input type="color" id="mixTargetColor" value="#1d4ed8" oninput="syncHex('mixTargetColor', 'mixTargetHex'); updateMix();">
-                            <input type="text" id="mixTargetHex" value="#1d4ed8" onchange="syncColor('mixTargetHex', 'mixTargetColor'); updateMix();" class="mt-2">
+        <!-- Panels Container -->
+        <div class="space-y-8">
+
+            <!-- 1. MIX ANALYZER -->
+            <div id="panel-mix" class="tab-panel animate-in fade-in duration-500">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="card p-8">
+                        <h2 class="text-xl font-bold mb-6 flex items-center"><span class="mr-2">🧪</span> SCSS Mix-Calculator</h2>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Basisfarbe (z.B. Primary)</label>
+                                <input type="color" id="mixBaseColor" value="#3b82f6" oninput="syncHex('mixBaseColor', 'mixBaseHex'); updateMix();">
+                                <input type="text" id="mixBaseHex" value="#3b82f6" onchange="syncColor('mixBaseHex', 'mixBaseColor'); updateMix();" class="mt-2">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Ziel-Farbe (Legacy Wert)</label>
+                                <input type="color" id="mixTargetColor" value="#1d4ed8" oninput="syncHex('mixTargetColor', 'mixTargetHex'); updateMix();">
+                                <input type="text" id="mixTargetHex" value="#1d4ed8" onchange="syncColor('mixTargetHex', 'mixTargetColor'); updateMix();" class="mt-2">
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="card p-8 bg-slate-900/50">
-                    <h3 class="text-xs font-bold text-slate-500 uppercase mb-4">Ergebnis für dein SCSS</h3>
-                    <div class="code-block text-emerald-400">
-                        <button class="copy-btn" onclick="copyContent('mixOutput')">Copy</button>
-                        <code id="mixOutput">mix(black, $primary, 15%)</code>
+                    <div class="card p-8 bg-slate-900/50">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase mb-4">Ergebnis für dein SCSS</h3>
+                        <div class="code-block text-emerald-400">
+                            <button class="copy-btn" onclick="copyContent('mixOutput')">Copy</button>
+                            <code id="mixOutput">mix(black, $primary, 15%)</code>
+                        </div>
                     </div>
-                    <p class="mt-6 text-sm text-slate-400 italic">Berechnet den exakten Mix-Anteil für dein Tokens-System.</p>
                 </div>
             </div>
-        </div>
 
-        <!-- 2. CONTRAST / WCAG TOOL -->
-        <div id="panel-contrast" class="tab-panel hidden animate-in fade-in duration-500">
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="card p-8">
-                    <h2 class="text-xl font-bold mb-6 flex items-center"><span class="mr-2">👁️</span> WCAG & YIQ Analyzer</h2>
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Hintergrundfarbe (Fläche)</label>
-                            <input type="color" id="conBgColor" value="#3b82f6" oninput="syncHex('conBgColor', 'conBgHex'); updateContrast();">
-                            <input type="text" id="conBgHex" value="#3b82f6" onchange="syncColor('conBgHex', 'conBgColor'); updateContrast();" class="mt-2">
+            <!-- 2. CONTRAST / WCAG -->
+            <div id="panel-contrast" class="tab-panel hidden animate-in fade-in duration-500">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="card p-8">
+                        <h2 class="text-xl font-bold mb-6 flex items-center"><span class="mr-2">👁️</span> WCAG & YIQ Analyzer</h2>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Hintergrundfarbe (Fläche)</label>
+                                <input type="color" id="conBgColor" value="#3b82f6" oninput="updateContrast();">
+                            </div>
+                            <div class="pt-6 border-t border-slate-700">
+                                <label class="block text-[10px] font-bold uppercase text-emerald-400 mb-4">Referenz-Textfarben</label>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[9px] text-slate-500 mb-1">Dunkel</label>
+                                        <input type="color" id="conDarkText" value="#0f172a" oninput="updateContrast();">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] text-slate-500 mb-1">Hell</label>
+                                        <input type="color" id="conLightText" value="#f8fafc" oninput="updateContrast();">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="pt-6 border-t border-slate-700">
-                            <label class="block text-[10px] font-bold uppercase text-emerald-400 mb-4">Optionale Brand-Textfarben</label>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div><label class="block text-[9px] text-slate-500 mb-1">Dark Text</label><input type="color" id="conDarkText" value="#0f172a" oninput="updateContrast();"></div>
-                                <div><label class="block text-[9px] text-slate-500 mb-1">Light Text</label><input type="color" id="conLightText" value="#f8fafc" oninput="updateContrast();"></div>
+                    </div>
+                    <div class="card overflow-hidden flex flex-col">
+                        <div id="conPreview" class="flex-grow p-12 flex flex-col items-center justify-center text-center">
+                            <h3 id="conPreviewText" class="text-2xl font-black mb-2">Vorschau</h3>
+                            <p id="ratioRes" class="text-xs font-bold font-mono opacity-80"></p>
+                        </div>
+                        <div id="wcagBadge" class="p-3 text-center text-[10px] font-black uppercase">Check...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. 60-30-10 -->
+            <div id="panel-rule" class="tab-panel hidden animate-in fade-in duration-500">
+                <div class="card p-8">
+                    <h2 class="text-xl font-bold mb-8">📐 60-30-10 Basis</h2>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase text-blue-400 mb-2">Akzentfarbe</label>
+                            <input type="color" id="ruleAccent" value="#3b82f6" oninput="updateRule();">
+                        </div>
+                        <div class="md:col-span-2 space-y-4">
+                            <div class="h-24 rounded-xl flex overflow-hidden border border-slate-800" id="ruleBar"></div>
+                            <div class="code-block text-blue-300">
+                                <pre id="ruleOutput" class="whitespace-pre-wrap"></pre>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="card overflow-hidden flex flex-col">
-                    <div id="conPreview" class="flex-grow p-12 flex flex-col items-center justify-center text-center transition-colors duration-500">
-                        <h3 id="conPreviewText" class="text-2xl font-black mb-2">Text Vorschau</h3>
-                        <p id="conPreviewSub" class="text-sm opacity-80">Barrierefreiheit prüfen</p>
-                    </div>
-                    <div class="p-6 bg-slate-900 grid grid-cols-2 gap-4 border-t border-slate-700">
-                        <div class="bg-slate-800 p-3 rounded text-center"><p class="text-[9px] uppercase text-slate-500 mb-1">YIQ Entscheidung</p><span id="yiqRes" class="text-sm font-bold text-blue-400">-</span></div>
-                        <div class="bg-slate-800 p-3 rounded text-center"><p class="text-[9px] uppercase text-slate-500 mb-1">Ratio</p><span id="ratioRes" class="text-sm font-bold text-white">-</span></div>
-                        <div id="wcagBadge" class="col-span-2 py-2 rounded text-center text-[10px] font-black uppercase tracking-tighter">Check...</div>
-                    </div>
-                </div>
             </div>
-        </div>
 
-        <!-- 3. 60-30-10 RULE -->
-        <div id="panel-rule" class="tab-panel hidden animate-in fade-in duration-500">
-            <div class="card p-8">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-xl font-bold">📐 60-30-10 Basis</h2>
-                    <div class="flex p-1 bg-slate-900 rounded-lg border border-slate-700">
-                        <button onclick="setRuleMode('light')" id="btn-mode-light" class="px-4 py-1.5 text-[10px] font-bold rounded uppercase transition-all">Light</button>
-                        <button onclick="setRuleMode('dark')" id="btn-mode-dark" class="px-4 py-1.5 text-[10px] font-bold rounded uppercase transition-all ml-1">Dark</button>
+            <!-- 4. UI SEMANTIC -->
+            <div id="panel-semantic" class="tab-panel hidden animate-in fade-in duration-500">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="card p-8 md:col-span-1">
+                        <h2 class="text-xl font-bold mb-6">🎨 UI Semantics</h2>
+                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Marken-Primärfarbe</label>
+                        <input type="color" id="semBase" value="#3b82f6" oninput="updateSemantic();">
+                        <p class="mt-4 text-[10px] text-slate-400 leading-relaxed italic">
+                            Statusfarben werden zu 20% mit deiner Markenfarbe getönt.
+                        </p>
                     </div>
-                </div>
-                <div class="grid md:grid-cols-3 gap-12">
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase text-blue-400 mb-2">Akzentfarbe (10%)</label>
-                        <input type="color" id="ruleAccent" value="#3b82f6" oninput="updateRule();">
-                    </div>
-                    <div class="md:col-span-2 space-y-6">
-                        <div class="h-24 rounded-xl overflow-hidden flex border border-slate-800 shadow-xl">
-                            <div id="bar60" class="h-full flex items-center justify-center" style="width: 60%;"><span id="val60" class="text-[10px] font-bold"></span></div>
-                            <div id="bar30" class="h-full flex items-center justify-center" style="width: 30%;"><span id="val30" class="text-[10px] font-bold"></span></div>
-                            <div id="bar10" class="h-full flex items-center justify-center" style="width: 10%;"><span id="val10" class="text-[10px] font-bold"></span></div>
-                        </div>
-                        <div class="code-block text-blue-300"><pre id="ruleOutput" class="whitespace-pre-wrap"></pre></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. UI SEMANTIC GENERATOR -->
-        <div id="panel-semantic" class="tab-panel hidden animate-in fade-in duration-500">
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="card p-8 md:col-span-1">
-                    <h2 class="text-xl font-bold mb-6 flex items-center"><span class="mr-2">🎨</span> UI Semantics</h2>
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Marken-Primärfarbe</label>
-                            <input type="color" id="semBase" value="#3b82f6" oninput="updateSemantic();">
-                        </div>
-                        <div class="bg-slate-900/50 p-4 rounded-lg text-xs text-slate-400 leading-relaxed italic border border-slate-800">
-                            Generiert automatisch kontrast-sichere Komponentenfarben basierend auf deiner Marken-ID.
-                        </div>
-                    </div>
-                </div>
-                <div class="card p-8 md:col-span-2">
-                    <h3 class="text-xs font-bold text-slate-500 uppercase mb-6 tracking-widest">Komponenten Vorschau</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="semContainer">
-                        <!-- JS generated items -->
-                    </div>
-                    <div class="mt-8 pt-8 border-t border-slate-700">
-                        <div class="code-block text-emerald-400">
+                    <div class="card p-8 md:col-span-2">
+                        <div class="grid grid-cols-2 gap-4" id="semContainer"></div>
+                        <div class="code-block mt-6 text-emerald-400">
                             <button class="copy-btn" onclick="copyContent('semOutput')">Copy</button>
-                            <pre id="semOutput" class="whitespace-pre-wrap"></pre>
+                            <pre id="semOutput" class="whitespace-pre-wrap text-[10px]"></pre>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 5. MULTI-STEP SCALE -->
-        <div id="panel-scale" class="tab-panel hidden animate-in fade-in duration-500">
-            <div class="card p-8">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                    <h2 class="text-xl font-bold flex items-center"><span class="mr-2">🪜</span> Multi-Step Scale</h2>
-                    <div class="flex items-center space-x-4 bg-slate-900 p-2 rounded-lg border border-slate-700">
-                        <span class="text-[10px] font-bold uppercase text-slate-500">Stufen: <span id="scaleCountVal" class="text-blue-400">7</span></span>
-                        <input type="range" id="scaleCount" min="3" max="13" step="2" value="7" oninput="updateScale();" class="custom-range w-32">
-                    </div>
-                </div>
-                <div class="space-y-8">
-                    <div class="grid md:grid-cols-4 gap-8">
-                        <div>
-                            <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Basis Farbe</label>
+            <!-- 5. SCALE -->
+            <div id="panel-scale" class="tab-panel hidden animate-in fade-in duration-500">
+                <div class="card p-8">
+                    <h2 class="text-xl font-bold mb-6">🪜 Multi-Step Scale</h2>
+                    <div class="flex items-center space-x-6 mb-8">
+                        <div class="w-24">
+                            <label class="block text-[9px] font-bold text-slate-500 mb-1 uppercase text-center">Basis</label>
                             <input type="color" id="scaleBase" value="#3b82f6" oninput="updateScale();">
                         </div>
-                        <div class="md:col-span-3">
-                            <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Skala Vorschau</label>
-                            <div id="scalePreview" class="h-16 flex rounded-lg overflow-hidden border border-slate-700 shadow-xl"></div>
+                        <div class="flex-grow">
+                            <label class="block text-[9px] font-bold text-slate-500 mb-1 uppercase">Abstufungen</label>
+                            <input type="range" id="scaleCount" min="3" max="13" step="2" value="7" oninput="updateScale();" class="custom-range">
                         </div>
                     </div>
+                    <div id="scalePreview" class="h-16 flex rounded-lg overflow-hidden mb-6 border border-slate-700"></div>
                     <div class="code-block text-blue-300">
                         <button class="copy-btn" onclick="copyContent('scaleOutput')">Copy</button>
-                        <pre id="scaleOutput" class="whitespace-pre-wrap"></pre>
+                        <pre id="scaleOutput" class="text-[10px]"></pre>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 6. CONTRAST EXPLORER -->
-        <div id="panel-explorer" class="tab-panel hidden animate-in fade-in duration-500">
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="card p-8">
-                    <h2 class="text-xl font-bold mb-6 flex items-center"><span class="mr-2">🔍</span> Explorer</h2>
-                    <div>
+            <!-- 6. EXPLORER -->
+            <div id="panel-explorer" class="tab-panel hidden animate-in fade-in duration-500">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="card p-8">
+                        <h2 class="text-xl font-bold mb-4">🔍 Explorer</h2>
                         <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Hintergrundfarbe</label>
                         <input type="color" id="expBase" value="#0f172a" oninput="updateExplorer();">
                     </div>
-                    <p class="mt-6 text-xs text-slate-400 leading-relaxed italic">Findet die mathematisch besten Akzentfarben für Buttons oder Infoboxen basierend auf dem gewählten Hintergrund.</p>
-                </div>
-                <div class="md:col-span-2 space-y-4" id="expResults">
-                    <!-- JS generated results -->
+                    <div class="md:col-span-2 space-y-4" id="expResults"></div>
                 </div>
             </div>
+
+            <!-- 7. QUIET UI -->
+            <div id="panel-quiet" class="tab-panel hidden animate-in fade-in duration-500">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="card p-8">
+                        <h2 class="text-xl font-bold mb-4 text-emerald-400">🌿 Atmospheric UI</h2>
+                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2">Markenfarbe</label>
+                        <input type="color" id="quietBase" value="#3b82f6" oninput="updateQuiet();">
+                        <div class="mt-6 p-4 bg-slate-900/50 rounded-lg text-[10px] text-slate-400 leading-relaxed border border-emerald-500/20">
+                            Grautöne mit 2-8% Markenanteil für maximale Ruhe im Design.
+                        </div>
+                    </div>
+                    <div class="md:col-span-2 card p-8">
+                        <div class="grid grid-cols-1 gap-3" id="quietContainer"></div>
+                        <div class="code-block mt-6 text-emerald-400">
+                            <button class="copy-btn" onclick="copyContent('quietOutput')">Copy</button>
+                            <pre id="quietOutput" class="whitespace-pre-wrap text-[10px]"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -227,235 +228,196 @@
         function showTab(id) {
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('panel-' + id).classList.remove('hidden');
-            document.getElementById('tab-' + id).classList.add('active');
-            window.dispatchEvent(new Event('resize')); // Fix for any alignment issues
+            const target = document.getElementById('panel-' + id);
+            if(target) target.classList.remove('hidden');
+            const btn = document.getElementById('tab-' + id);
+            if(btn) btn.classList.add('active');
         }
 
-        // --- CORE HELPERS ---
-        function syncHex(colorId, hexId) { document.getElementById(hexId).value = document.getElementById(colorId).value; }
-        function syncColor(hexId, colorId) { document.getElementById(colorId).value = document.getElementById(hexId).value; }
+        // --- HELPERS ---
+        function syncHex(cId, hId) { document.getElementById(hId).value = document.getElementById(cId).value; }
+        function syncColor(hId, cId) { document.getElementById(cId).value = document.getElementById(hId).value; }
+
         function hexToRgb(hex) {
-            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : null;
+            const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return r ? { r: parseInt(r[1], 16), g: parseInt(r[2], 16), b: parseInt(r[3], 16) } : null;
         }
         function rgbToHex(r, g, b) { return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1); }
-        function mix(c1, c2, p) {
+
+        function mix(c1, c2, weight) {
+            const p = weight;
             const r = Math.round(c1.r * p + c2.r * (1 - p));
             const g = Math.round(c1.g * p + c2.g * (1 - p));
             const b = Math.round(c1.b * p + c2.b * (1 - p));
             return { r, g, b, hex: rgbToHex(r, g, b) };
         }
-        function getLuminance(r, g, b) {
-            let a = [r, g, b].map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+
+        function getYIQ(rgb) { return ((rgb.r * 299) + (rgb.g * 587) + (rgb.b * 114)) / 1000; }
+
+        function getLuminance(rgb) {
+            let a = [rgb.r, rgb.g, rgb.b].map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
             return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
         }
-        function getContrastRatio(rgb1, rgb2) {
-            let l1 = getLuminance(rgb1.r, rgb1.g, rgb1.b) + 0.05;
-            let l2 = getLuminance(rgb2.r, rgb2.g, rgb2.b) + 0.05;
-            return l1 > l2 ? l1 / l2 : l2 / l1;
-        }
-        function getYIQ(rgb) { return ((rgb.r * 299) + (rgb.g * 587) + (rgb.b * 114)) / 1000; }
-        function getBestText(bgRgb) { return getYIQ(bgRgb) >= 128 ? {hex: "#000000", r:0, g:0, b:0} : {hex: "#ffffff", r:255, g:255, b:255}; }
 
-        // HSL Conversion for Harmony
-        function rgbToHsl(r, g, b) {
-            r /= 255, g /= 255, b /= 255;
-            let max = Math.max(r, g, b), min = Math.min(r, g, b);
-            let h, s, l = (max + min) / 2;
-            if (max == min) { h = s = 0; } else {
-                let d = max - min;
-                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-                switch (max) {
-                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-                    case g: h = (b - r) / d + 2; break;
-                    case b: h = (r - g) / d + 4; break;
-                }
-                h /= 6;
-            }
-            return { h: h * 360, s: s * 100, l: l * 100 };
-        }
-        function hslToRgb(h, s, l) {
-            s /= 100; l /= 100; h /= 360;
-            let r, g, b;
-            if (s == 0) { r = g = b = l; } else {
-                function hue2rgb(p, q, t) {
-                    if (t < 0) t += 1; if (t > 1) t -= 1;
-                    if (t < 1 / 6) return p + (q - p) * 6 * t;
-                    if (t < 1 / 2) return q;
-                    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-                    return p;
-                }
-                let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-                let p = 2 * l - q;
-                r = hue2rgb(p, q, h + 1 / 3);
-                g = hue2rgb(p, q, h);
-                b = hue2rgb(p, q, h - 1 / 3);
-            }
-            return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255), hex: rgbToHex(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)) };
+        function getContrast(rgb1, rgb2) {
+            let l1 = getLuminance(rgb1) + 0.05;
+            let l2 = getLuminance(rgb2) + 0.05;
+            return l1 > l2 ? l1 / l2 : l2 / l1;
         }
 
         function copyContent(id) {
-            const text = document.getElementById(id).innerText;
-            const ta = document.createElement("textarea"); ta.value = text;
+            const el = document.getElementById(id);
+            const ta = document.createElement("textarea"); ta.value = el.innerText;
             document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
-            const btn = event.target; const old = btn.innerText; btn.innerText = "Copied!"; setTimeout(()=>btn.innerText = old, 1200);
+            const btn = event.currentTarget; const old = btn.innerText; btn.innerText = "Copied!"; setTimeout(()=>btn.innerText = old, 1200);
         }
 
-        // --- TOOL 1: MIX ---
+        // --- UPDATERS ---
+
         function updateMix() {
-            const base = hexToRgb(document.getElementById('mixBaseColor').value);
-            const target = hexToRgb(document.getElementById('mixTargetColor').value);
+            const baseInput = document.getElementById('mixBaseColor');
+            const targetInput = document.getElementById('mixTargetColor');
+            if(!baseInput || !targetInput) return;
+            const base = hexToRgb(baseInput.value);
+            const target = hexToRgb(targetInput.value);
             if(!base || !target) return;
             const bAvg = (base.r + base.g + base.b)/3;
             const tAvg = (target.r + target.g + target.b)/3;
-            let pColor = tAvg > bAvg ? {r:255, g:255, b:255, name:'white'} : {r:0, g:0, b:0, name:'black'};
-            const ds = [(target.r-base.r)/(pColor.r-base.r), (target.g-base.g)/(pColor.g-base.g), (target.b-base.b)/(pColor.b-base.b)].filter(v=>isFinite(v)&&!isNaN(v));
+            let partner = tAvg > bAvg ? {r:255, g:255, b:255, name:'white'} : {r:0, g:0, b:0, name:'black'};
+            const ds = [(target.r-base.r)/(partner.r-base.r), (target.g-base.g)/(partner.g-base.g), (target.b-base.b)/(partner.b-base.b)].filter(v=>isFinite(v)&&!isNaN(v));
             const p = ds.length > 0 ? Math.round((ds.reduce((a,b)=>a+b)/ds.length)*100) : 0;
-            document.getElementById('mixOutput').innerText = `mix(${pColor.name}, $base-color, ${Math.max(0, p)}%)`;
+            document.getElementById('mixOutput').innerText = `mix(${partner.name}, $brand-primary, ${Math.max(0, p)}%)`;
         }
 
-        // --- TOOL 2: CONTRAST ---
         function updateContrast() {
-            const bg = hexToRgb(document.getElementById('conBgColor').value);
-            const dark = hexToRgb(document.getElementById('conDarkText').value);
-            const light = hexToRgb(document.getElementById('conLightText').value);
+            const bgInput = document.getElementById('conBgColor');
+            const darkInput = document.getElementById('conDarkText');
+            const lightInput = document.getElementById('conLightText');
+            if(!bgInput || !darkInput || !lightInput) return;
+
+            const bg = hexToRgb(bgInput.value);
+            const dark = hexToRgb(darkInput.value);
+            const light = hexToRgb(lightInput.value);
+
             const isL = getYIQ(bg) >= 128;
-            const sel = isL ? dark : light;
-            const selHex = isL ? document.getElementById('conDarkText').value : document.getElementById('conLightText').value;
+            const text = isL ? dark : light;
+            const r = getContrast(bg, text).toFixed(2);
+
             const prev = document.getElementById('conPreview');
-            prev.style.backgroundColor = document.getElementById('conBgColor').value;
-            document.getElementById('conPreviewText').style.color = selHex;
-            document.getElementById('conPreviewSub').style.color = selHex;
-            document.getElementById('yiqRes').innerText = isL ? "Dunkel" : "Hell";
-            const r = getContrastRatio(bg, sel).toFixed(2);
-            document.getElementById('ratioRes').innerText = r + ":1";
+            prev.style.backgroundColor = bgInput.value;
+            document.getElementById('conPreviewText').style.color = isL ? darkInput.value : lightInput.value;
+            document.getElementById('ratioRes').innerText = `${r} : 1`;
+
             const b = document.getElementById('wcagBadge');
-            b.innerText = r >= 7 ? "AAA - EXZELLENT" : r >= 4.5 ? "AA - BESTANDEN" : "FAIL - UNLESBAR";
-            b.className = `col-span-2 py-2 rounded text-center text-[10px] font-black uppercase ${r>=7?'bg-emerald-500':r>=4.5?'bg-blue-500':'bg-red-600'}`;
+            b.innerText = r >= 4.5 ? "Bestanden" : "Kritisch";
+            b.style.backgroundColor = r >= 4.5 ? "#3b82f6" : "#ef4444";
         }
 
-        // --- TOOL 3: 60-30-10 ---
-        let ruleMode = 'light';
-        function setRuleMode(m) { ruleMode = m; updateRule(); }
         function updateRule() {
-            const acc = hexToRgb(document.getElementById('ruleAccent').value);
-            let b = ruleMode === 'light' ? "#F8FAFC" : "#0F172A";
-            let s = ruleMode === 'light' ? rgbToHex(Math.round(acc.r*0.1 + 225), Math.round(acc.g*0.1 + 225), Math.round(acc.b*0.1 + 225)) : rgbToHex(Math.round(acc.r*0.15), Math.round(acc.g*0.15), Math.round(acc.b*0.15));
-            document.getElementById('bar60').style.backgroundColor = b;
-            document.getElementById('val60').innerText = b;
-            document.getElementById('bar30').style.backgroundColor = s;
-            document.getElementById('val30').innerText = s;
-            document.getElementById('bar10').style.backgroundColor = document.getElementById('ruleAccent').value;
-            document.getElementById('val10').innerText = document.getElementById('ruleAccent').value;
-            document.getElementById('ruleOutput').innerText = `$base: ${b};\n$secondary: ${s};\n$accent: ${document.getElementById('ruleAccent').value};`;
+            const accInput = document.getElementById('ruleAccent');
+            if(!accInput) return;
+            const acc = hexToRgb(accInput.value);
+            const b = "#f8fafc";
+            const s = mix(acc, {r:255, g:255, b:255}, 0.1).hex;
+            const bar = document.getElementById('ruleBar');
+            bar.innerHTML = `<div style="width:60%; background:#f8fafc"></div><div style="width:30%; background:${s}"></div><div style="width:10%; background:${accInput.value}"></div>`;
+            document.getElementById('ruleOutput').innerText = `$base: #f8fafc;\n$secondary: ${s};\n$accent: ${accInput.value};`;
         }
 
-        // --- TOOL 4: SEMANTIC UI ---
         function updateSemantic() {
-            const base = hexToRgb(document.getElementById('semBase').value);
-            const white = {r:255, g:255, b:255};
-            const black = {r:0, g:0, b:0};
-
-            const types = [
-                { name: 'Primary', color: base },
-                { name: 'Secondary', color: mix(base, {r:128, g:128, b:128}, 0.5) },
-                { name: 'Info', color: {r:59, g:130, b:246} },
-                { name: 'Success', color: {r:16, g:185, b:129} },
-                { name: 'Warning', color: {r:245, g:158, b:11} },
-                { name: 'Danger', color: {r:239, g:68, b:68} }
+            const brandInput = document.getElementById('semBase');
+            if(!brandInput) return;
+            const brand = hexToRgb(brandInput.value);
+            const baseStatus = [
+                { name: 'Info',    color: {r:59,  g:130, b:246} },
+                { name: 'Success', color: {r:34,  g:197, b:94}  },
+                { name: 'Warning', color: {r:234, g:179, b:8}   },
+                { name: 'Danger',  color: {r:239, g:68,  b:68}  }
             ];
-
             const container = document.getElementById('semContainer');
             container.innerHTML = '';
-            let scss = '$ui-semantics: (\n';
-
-            types.forEach(t => {
-                const bg = t.color;
-                const text = getBestText(bg);
-                const hover = mix(bg, black, 0.85);
-
+            let scss = '$semantic-tokens: (\n';
+            baseStatus.forEach(s => {
+                const tinted = mix(brand, s.color, 0.2);
+                const isL = getYIQ(tinted) >= 128;
+                const text = isL ? "#000" : "#fff";
                 const div = document.createElement('div');
-                div.className = "p-4 rounded-lg flex flex-col items-center justify-center transition-transform hover:scale-105";
-                div.style.backgroundColor = rgbToHex(bg.r, bg.g, bg.b);
-                div.style.color = text.hex;
-                div.innerHTML = `<span class="text-[10px] font-black uppercase">${t.name}</span><span class="text-[9px] font-mono mt-1 opacity-70">${rgbToHex(bg.r, bg.g, bg.b)}</span>`;
+                div.className = "p-3 rounded-lg flex flex-col items-center justify-center text-[10px] font-bold";
+                div.style.backgroundColor = tinted.hex;
+                div.style.color = text;
+                div.innerHTML = `<span>${s.name}</span><span class="opacity-60 font-mono">${tinted.hex}</span>`;
                 container.appendChild(div);
-
-                scss += `  "${t.name.toLowerCase()}": ( "bg": ${rgbToHex(bg.r, bg.g, bg.b)}, "text": ${text.hex}, "hover": ${hover.hex} ),\n`;
+                scss += `  "${s.name.toLowerCase()}": ( "bg": ${tinted.hex}, "text": ${text} ),\n`;
             });
             scss += ');';
             document.getElementById('semOutput').innerText = scss;
         }
 
-        // --- TOOL 5: MULTI-SCALE ---
         function updateScale() {
-            const base = hexToRgb(document.getElementById('scaleBase').value);
-            const count = parseInt(document.getElementById('scaleCount').value);
-            document.getElementById('scaleCountVal').innerText = count;
-            const preview = document.getElementById('scalePreview');
-            preview.innerHTML = '';
-            let scss = '$color-scale: (\n';
-
+            const baseInput = document.getElementById('scaleBase');
+            const countInput = document.getElementById('scaleCount');
+            if(!baseInput || !countInput) return;
+            const base = hexToRgb(baseInput.value);
+            const count = parseInt(countInput.value);
+            const prev = document.getElementById('scalePreview');
+            prev.innerHTML = '';
+            let scss = '$scale: (\n';
             for(let i=0; i<count; i++) {
-                const ratio = i / (count - 1);
-                const color = ratio < 0.5 ? mix(base, {r:255, g:255, b:255}, (0.5 - ratio) * 2) : mix({r:0, g:0, b:0}, base, (ratio - 0.5) * 2);
-                const step = (i + 1) * 100;
-
-                const div = document.createElement('div');
-                div.style.flex = "1";
-                div.style.backgroundColor = color.hex;
-                preview.appendChild(div);
-
-                scss += `  "${step}": ${color.hex},\n`;
+                const w = i / (count-1);
+                const c = mix({r:255,g:255,b:255}, base, 1-w);
+                const d = document.createElement('div');
+                d.style.flex = 1; d.style.background = c.hex; prev.appendChild(d);
+                scss += `  "${(i+1)*100}": ${c.hex},\n`;
             }
             scss += ');';
             document.getElementById('scaleOutput').innerText = scss;
         }
 
-        // --- TOOL 6: EXPLORER ---
         function updateExplorer() {
-            const bg = hexToRgb(document.getElementById('expBase').value);
-            const hsl = rgbToHsl(bg.r, bg.g, bg.b);
-            const container = document.getElementById('expResults');
-            container.innerHTML = '';
-
-            const harmonies = [
-                { name: 'Komplementär', h: (hsl.h + 180) % 360 },
-                { name: 'Triadisch A', h: (hsl.h + 120) % 360 },
-                { name: 'Triadisch B', h: (hsl.h + 240) % 360 },
-                { name: 'Analog A', h: (hsl.h + 30) % 360 },
-                { name: 'Analog B', h: (hsl.h - 30 + 360) % 360 }
-            ];
-
-            harmonies.forEach(har => {
-                const acc = hslToRgb(har.h, Math.max(hsl.s, 60), Math.max(hsl.l, 50));
-                const ratio = getContrastRatio(bg, acc).toFixed(2);
-                const text = getBestText(acc);
-
+            const bgInput = document.getElementById('expBase');
+            if(!bgInput) return;
+            const bg = hexToRgb(bgInput.value);
+            const res = document.getElementById('expResults');
+            res.innerHTML = '';
+            const testColors = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"];
+            testColors.forEach(c => {
+                const rgb = hexToRgb(c);
+                const r = getContrast(bg, rgb).toFixed(1);
                 const div = document.createElement('div');
-                div.className = "card p-4 flex items-center justify-between border-l-4";
-                div.style.borderLeftColor = acc.hex;
-
-                div.innerHTML = `
-                    <div>
-                        <p class="text-[10px] font-bold text-slate-500 uppercase">${har.name}</p>
-                        <p class="text-sm font-black text-white">${acc.hex}</p>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <div class="px-4 py-2 rounded font-bold text-xs" style="background-color: ${acc.hex}; color: ${text.hex}">Button</div>
-                        <div class="text-right">
-                            <p class="text-[9px] font-bold text-slate-500 uppercase">Contrast</p>
-                            <p class="text-xs font-mono ${ratio >= 4.5 ? 'text-emerald-400' : 'text-red-400'}">${ratio}:1</p>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(div);
+                div.className = "card p-3 flex justify-between items-center";
+                div.innerHTML = `<div class="w-8 h-8 rounded" style="background:${c}"></div><span class="font-mono text-xs">${c}</span><span class="text-xs font-bold ${r>=4.5?'text-emerald-400':'text-red-400'}">Ratio: ${r}</span>`;
+                res.appendChild(div);
             });
         }
 
+        function updateQuiet() {
+            const brandInput = document.getElementById('quietBase');
+            if(!brandInput) return;
+            const brand = hexToRgb(brandInput.value);
+            const container = document.getElementById('quietContainer');
+            container.innerHTML = '';
+            const neutrals = [
+                { name: "Surface", mix: 0.02, b: {r:255,g:255,b:255} },
+                { name: "Background", mix: 0.04, b: {r:252,g:252,b:252} },
+                { name: "Offset", mix: 0.08, b: {r:245,g:245,b:245} },
+                { name: "Border", mix: 0.15, b: {r:210,g:210,b:210} }
+            ];
+            let scss = '$quiet-ui: (\n';
+            neutrals.forEach(n => {
+                const t = mix(brand, n.b, n.mix);
+                const div = document.createElement('div');
+                div.className = "flex items-center justify-between p-3 rounded-lg border border-slate-700/50";
+                div.style.backgroundColor = t.hex;
+                div.innerHTML = `<span class="text-[9px] font-bold uppercase text-slate-500">${n.name}</span><span class="font-mono text-[10px] text-slate-400">${t.hex}</span>`;
+                container.appendChild(div);
+                scss += `  "${n.name.toLowerCase()}": ${t.hex},\n`;
+            });
+            scss += ');';
+            document.getElementById('quietOutput').innerText = scss;
+        }
+
         window.onload = () => {
-            updateMix(); updateContrast(); updateRule(); updateSemantic(); updateScale(); updateExplorer();
+            updateMix(); updateContrast(); updateRule(); updateSemantic(); updateScale(); updateExplorer(); updateQuiet();
         };
     </script>
 </body>
