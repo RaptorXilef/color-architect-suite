@@ -41,11 +41,11 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .glass-bg-pattern {
-            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0);
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.1) 1px, transparent 0);
             background-size: 32px 32px;
         }
 
-        .blob { position: absolute; border-radius: 50%; filter: blur(40px); opacity: 0.6; z-index: 0; animation: float 10s infinite ease-in-out; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(40px); opacity: 0.4; z-index: 0; animation: float 10s infinite ease-in-out; }
         @keyframes float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(20px, -20px); } }
     </style>
 </head>
@@ -68,10 +68,10 @@
                 <button onclick="showTab('scale')" id="tab-scale" class="tab-btn">Scale Pro</button>
                 <button onclick="showTab('explorer')" id="tab-explorer" class="tab-btn">Explorer</button>
                 <button onclick="showTab('quiet')" id="tab-quiet" class="tab-btn">Theme</button>
-                <button onclick="showTab('glass')" id="tab-glass" class="tab-btn text-emerald-400">Glass</button>
-                <button onclick="showTab('grad')" id="tab-grad" class="tab-btn text-orange-400">Gradient</button>
-                <button onclick="showTab('typo')" id="tab-typo" class="tab-btn text-purple-400">Typo Scale</button>
-                <button onclick="showTab('shadow')" id="tab-shadow" class="tab-btn text-pink-400">Shadow Pro</button>
+                <button onclick="showTab('glass')" id="tab-glass" class="tab-btn">Glass</button>
+                <button onclick="showTab('grad')" id="tab-grad" class="tab-btn">Gradient</button>
+                <button onclick="showTab('typo')" id="tab-typo" class="tab-btn">Typo Scale</button>
+                <button onclick="showTab('shadow')" id="tab-shadow" class="tab-btn">Shadow Pro</button>
             </nav>
         </div>
 
@@ -83,20 +83,16 @@
                         <h2 class="text-2xl font-bold mb-8 flex items-center"><span class="mr-3 text-blue-400">🧪</span> SCSS Mix-Calculator</h2>
                         <div class="flex p-1 bg-slate-900 rounded-xl border border-slate-700 mb-8">
                             <button onclick="setMixMode('bw')" id="mix-mode-bw" class="flex-1 py-2 text-[10px] font-black rounded-lg uppercase bg-blue-600">Standard (B/W)</button>
-                            <button onclick="setMixMode('blend')" id="mix-mode-blend" class="flex-1 py-2 text-[10px] font-black rounded-lg uppercase ml-2">Color Blend</button>
+                            <button onclick="setMixMode('auto')" id="mix-mode-auto" class="flex-1 py-2 text-[10px] font-black rounded-lg uppercase ml-2">Auto-Partner</button>
                         </div>
                         <div class="space-y-6">
                             <div>
-                                <label class="block text-[11px] font-black uppercase text-slate-500 mb-2">Basisfarbe</label>
+                                <label class="block text-[11px] font-black uppercase text-slate-500 mb-2 tracking-widest">Basisfarbe</label>
                                 <input type="color" id="mixBaseColor" value="#3b82f6" oninput="updateMix();">
                             </div>
-                            <div id="mixBlendWrapper" class="hidden">
-                                <label class="block text-[11px] font-black uppercase text-orange-400 mb-2">Misch-Partner (Farbe)</label>
-                                <input type="color" id="mixPartnerColor" value="#ff0000" oninput="updateMix();">
-                            </div>
                             <div>
-                                <label class="block text-[11px] font-black uppercase text-slate-500 mb-2">Ziel-Farbe (Legacy)</label>
-                                <input type="color" id="mixTargetColor" value="#1d4ed8" oninput="updateMix();">
+                                <label class="block text-[11px] font-black uppercase text-slate-500 mb-2 tracking-widest">Zielfarbe (Wunsch-Ergebnis)</label>
+                                <input type="color" id="mixTargetColor" value="#0044ff" oninput="updateMix();">
                             </div>
                         </div>
                     </div>
@@ -104,6 +100,9 @@
                         <h3 class="text-xs font-black text-slate-500 uppercase mb-6 tracking-widest">Die Rezeptur</h3>
                         <div class="code-block text-emerald-400"><button class="copy-btn" onclick="copyContent(event, 'mixOutput')">Copy</button><code id="mixOutput"></code></div>
                         <div id="mixVisualRecipe" class="mt-8 space-y-4"></div>
+                        <p class="mt-8 text-slate-400 text-[11px] italic leading-relaxed" id="mixExplanation">
+                            Berechnet im Auto-Modus die exakte Partnerfarbe, um von der Basis zum Ziel zu gelangen.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -112,7 +111,7 @@
             <div id="panel-contrast" class="tab-panel hidden">
                 <div class="grid md:grid-cols-2 gap-8">
                     <div class="card p-10">
-                        <h2 class="text-2xl font-bold mb-8">👁️ WCAG Analyzer</h2>
+                        <h2 class="text-2xl font-bold mb-8">👁️ WCAG & YIQ Analyzer</h2>
                         <input type="color" id="conBgColor" value="#3b82f6" oninput="updateContrast();">
                         <div class="pt-8 border-t border-slate-700 grid grid-cols-2 gap-6 mt-8">
                             <div><label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Dark Text</label><input type="color" id="conDarkText" value="#0f172a" oninput="updateContrast();"></div>
@@ -232,7 +231,7 @@
                         <h2 class="text-2xl font-bold text-emerald-400 mb-8 uppercase">💎 Glass Architect</h2>
                         <div class="space-y-6">
                             <div><label class="block text-[11px] text-slate-500 mb-2 uppercase">Kontext (Border)</label><input type="color" id="glassContext" value="#0f172a" oninput="updateGlass();"></div>
-                            <div><label class="block text-[11px] text-slate-500 mb-2 uppercase">Hintergrund</label><input type="color" id="glassVisualBg" value="#1e293b" oninput="updateGlass();"></div>
+                            <div><label class="block text-[11px] text-slate-500 mb-2 uppercase">Vorschau-HG</label><input type="color" id="glassVisualBg" value="#1e293b" oninput="updateGlass();"></div>
                             <input type="file" id="glassImageInput" accept="image/*" onchange="handleVisualBgImage(this, 'glassPreviewContainer')" class="block w-full text-[10px] text-slate-500 cursor-pointer">
                             <div><label class="block text-[10px] text-slate-500 mb-2 uppercase">Deckkraft: <span id="glassOpacityVal">20%</span></label><input type="range" id="glassOpacity" min="5" max="60" step="5" value="20" oninput="updateGlass();" class="custom-range"></div>
                             <div><label class="block text-[10px] text-slate-500 mb-2 uppercase">Blur: <span id="glassBlurVal">12px</span></label><input type="range" id="glassBlur" min="0" max="40" step="1" value="12" oninput="updateGlass();" class="custom-range"></div>
@@ -241,6 +240,7 @@
                     <div class="md:col-span-2 space-y-8">
                         <div id="glassPreviewContainer" class="rounded-3xl p-16 glass-bg-pattern flex items-center justify-center relative overflow-hidden border border-slate-800 shadow-2xl bg-cover bg-center transition-all duration-500" style="min-height: 450px;">
                             <div class="blob w-32 h-32 bg-blue-500" style="top: 20%; left: 20%; animation-delay: 0s;"></div>
+                            <div class="blob w-24 h-24 bg-emerald-400" style="bottom: 30%; right: 25%; animation-delay: -2s;"></div>
                             <div class="blob w-40 h-40 bg-purple-600" style="top: 50%; left: 60%; animation-delay: -5s;"></div>
                             <div id="glassPreviewPane" class="w-full max-w-sm p-12 rounded-3xl border transition-all duration-300 relative z-10 text-center">
                                 <h4 class="text-2xl font-black mb-4 uppercase">Frosted Glass</h4>
@@ -264,7 +264,7 @@
                     </div>
                     <div class="md:col-span-2 space-y-8">
                         <div id="gradPreview" class="rounded-3xl h-64 shadow-2xl border border-slate-800 transition-all duration-500 flex items-center justify-center">
-                            <span class="text-white font-black text-3xl uppercase tracking-tighter opacity-20">Preview Area</span>
+                            <span class="text-white font-black text-3xl uppercase tracking-tighter opacity-20">Preview</span>
                         </div>
                         <div class="code-block text-emerald-300"><button class="copy-btn" onclick="copyContent(event, 'gradOutput')">Copy</button><pre id="gradOutput" class="text-xs"></pre></div>
                     </div>
@@ -302,14 +302,14 @@
                         <h2 class="text-2xl font-bold text-pink-400 mb-8 uppercase">🌑 Shadow Pro</h2>
                         <div class="space-y-6">
                             <div><label class="block text-[10px] text-slate-500 mb-2 uppercase">Schatten Farbe</label><input type="color" id="shadColor" value="#000000" oninput="updateShadow();"></div>
-                            <div><label class="block text-[10px] text-slate-500 mb-2 uppercase">Hintergrund Farbe</label><input type="color" id="shadVisualBg" value="#1e293b" oninput="updateShadow();"></div>
+                            <div><label class="block text-[10px] text-slate-500 mb-2 uppercase">HG Farbe</label><input type="color" id="shadVisualBg" value="#1e293b" oninput="updateShadow();"></div>
                             <input type="file" id="shadImageInput" accept="image/*" onchange="handleVisualBgImage(this, 'shadPreviewContainer')" class="block w-full text-[10px] text-slate-500 cursor-pointer">
                             <div><label class="block text-[10px] text-slate-500 mb-2 uppercase">Intensität</label><input type="range" id="shadIntensity" min="5" max="50" step="1" value="20" oninput="updateShadow();" class="custom-range"></div>
                         </div>
                     </div>
                     <div class="md:col-span-2 space-y-8">
                         <div id="shadPreviewContainer" class="h-64 rounded-3xl flex items-center justify-center border border-slate-700 bg-cover bg-center transition-all duration-500">
-                            <div id="shadPreviewBox" class="w-32 h-32 bg-slate-100 rounded-3xl shadow-xl"></div>
+                            <div id="shadPreviewBox" class="w-32 h-32 bg-slate-100 rounded-3xl"></div>
                         </div>
                         <div class="code-block text-pink-300"><button class="copy-btn" onclick="copyContent(event, 'shadOutput')">Copy</button><pre id="shadOutput" class="text-xs"></pre></div>
                     </div>
@@ -324,8 +324,8 @@
 
         // --- MATH HELPERS ---
         function safeHexToRgb(hex) {
-            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : {r:0,g:0,b:0};
+            const res = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return res ? { r: parseInt(res[1], 16), g: parseInt(res[2], 16), b: parseInt(res[3], 16) } : {r:0,g:0,b:0};
         }
         const rgbToHex = (r, g, b) => "#" + ((1 << 24) + (Math.max(0, Math.min(255, r)) << 16) + (Math.max(0, Math.min(255, g)) << 8) + Math.max(0, Math.min(255, b))).toString(16).slice(1).toUpperCase();
         const mixColors = (c1, c2, w) => {
@@ -367,30 +367,40 @@
             const p = document.getElementById('panel-' + id); if(p) p.classList.remove('hidden');
             const b = document.getElementById('tab-' + id); if(b) b.classList.add('active');
         }
-        function syncHex(cId, hId) { document.getElementById(hId).value = document.getElementById(cId).value.toUpperCase(); }
-        function syncColor(hId, cId) { if(/^#[0-9A-F]{6}$/i.test(document.getElementById(hId).value)) document.getElementById(cId).value = document.getElementById(hId).value; }
         function copyContent(e, id) {
             const ta = document.createElement("textarea"); ta.value = document.getElementById(id).innerText; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
-            const btn = e.currentTarget; const old = btn.innerText; btn.innerText = "Copied!"; setTimeout(()=>btn.innerText = old, 1200);
+            const btn = e.currentTarget; const old = btn.innerText; btn.innerText = "COPIED!"; setTimeout(()=>btn.innerText = old, 1200);
         }
         function handleVisualBgImage(input, containerId) { const f = input.files[0]; if(!f) return; const r = new FileReader(); r.onload = (e) => document.getElementById(containerId).style.backgroundImage = `url(${e.target.result})`; r.readAsDataURL(f); }
 
         // --- UPDATERS ---
-        function setMixMode(m) { mixMode = m; document.getElementById('mix-mode-bw').classList.toggle('bg-blue-600', m==='bw'); document.getElementById('mix-mode-blend').classList.toggle('bg-blue-600', m==='blend'); document.getElementById('mixBlendWrapper').classList.toggle('hidden', m!=='blend'); updateMix(); }
+        function setMixMode(m) { mixMode = m; document.getElementById('mix-mode-bw').classList.toggle('bg-blue-600', m==='bw'); document.getElementById('mix-mode-auto').classList.toggle('bg-blue-600', m==='auto'); updateMix(); }
         function updateMix() {
             const bR = safeHexToRgb(document.getElementById('mixBaseColor').value), tR = safeHexToRgb(document.getElementById('mixTargetColor').value);
             const vis = document.getElementById('mixVisualRecipe'); vis.innerHTML = ''; let scss = '';
             if (mixMode === 'bw') {
-                let p = tR > bR ? {r:255,g:255,b:255,n:'white'} : {r:0,g:0,b:0,n:'black'};
+                let p = (tR.r+tR.g+tR.b)/3 > (bR.r+bR.g+bR.b)/3 ? {r:255,g:255,b:255,n:'white'} : {r:0,g:0,b:0,n:'black'};
                 const ds = [(tR.r-bR.r)/(p.r-bR.r), (tR.g-bR.g)/(p.g-bR.g), (tR.b-bR.b)/(p.b-bR.b)].filter(v=>isFinite(v)&&!isNaN(v));
                 const w = ds.length > 0 ? Math.round((ds.reduce((x,y)=>x+y)/ds.length)*100) : 0;
                 scss = `mix(${p.n}, $brand-primary, ${Math.max(0, w)}%)`;
             } else {
-                const pR = safeHexToRgb(document.getElementById('mixPartnerColor').value);
-                const ds = [(tR.r-bR.r)/(pR.r-bR.r), (tR.g-bR.g)/(pR.g-bR.g), (tR.b-bR.b)/(pR.b-bR.b)].filter(v=>isFinite(v)&&!isNaN(v));
-                const w = ds.length > 0 ? Math.round((ds.reduce((x,y)=>x+y)/ds.length)*100) : 0;
-                scss = `mix(${document.getElementById('mixPartnerColor').value}, $brand-primary, ${Math.max(0, w)}%)`;
-                vis.innerHTML = `<div class="flex items-center gap-2"><div class="w-6 h-6 rounded" style="background:${document.getElementById('mixPartnerColor').value}"></div><span class="text-[10px] font-bold uppercase text-slate-500">Mischfarbe</span></div>`;
+                // Formula: Target = Partner * w + Base * (1 - w)
+                // Partner = (Target - Base * (1 - w)) / w
+                // We find the minimal w (percentage) such that Partner's R,G,B are within [0, 255]
+                let bestW = 0.01;
+                for(let w=0.01; w<=1.0; w+=0.01) {
+                    const r = (tR.r - bR.r * (1-w)) / w;
+                    const g = (tR.g - bR.g * (1-w)) / w;
+                    const b = (tR.b - bR.b * (1-w)) / w;
+                    if(r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) { bestW = w; break; }
+                }
+                const pR = Math.round((tR.r - bR.r * (1-bestW)) / bestW);
+                const pG = Math.round((tR.g - bR.g * (1-bestW)) / bestW);
+                const pB = Math.round((tR.b - bR.b * (1-bestW)) / bestW);
+                const pHex = rgbToHex(pR, pG, pB);
+                const percent = Math.round(bestW * 100);
+                scss = `mix(${pHex}, $brand-primary, ${percent}%)`;
+                vis.innerHTML = `<div class="flex items-center gap-2"><div class="w-6 h-6 rounded" style="background:${pHex}"></div><span class="text-[10px] font-bold uppercase text-slate-500">Auto-Partner: ${pHex}</span></div>`;
             }
             document.getElementById('mixOutput').innerText = scss;
         }
@@ -401,7 +411,7 @@
             const r = getContrast(bg, isL ? safeHexToRgb(darkH) : safeHexToRgb(lightH)).toFixed(2);
             document.getElementById('conPreview').style.backgroundColor = bgH; document.getElementById('conPreviewText').style.color = isL ? darkH : lightH;
             document.getElementById('ratioRes').innerText = `${r} : 1`;
-            const b = document.getElementById('wcagBadge'); b.innerText = r >= 4.5 ? (r >= 7 ? "AAA" : "AA") : "KRITISCH"; b.style.backgroundColor = r >= 4.5 ? "#10b981" : "#ef4444";
+            const b = document.getElementById('wcagBadge'); b.innerText = r >= 4.5 ? (r >= 7 ? "AAA" : "AA") : "Fail"; b.style.backgroundColor = r >= 4.5 ? "#10b981" : "#ef4444";
         }
 
         function setRuleMode(m) { ruleMode = m; updateRule(); }
@@ -419,7 +429,7 @@
             const cont = document.getElementById('semContainer'); cont.innerHTML = ''; let scss = '$semantic: (\n';
             states.forEach(s => {
                 const tint = mixColors(brand, s.c, 0.2), txt = getYIQ(tint) >= 128 ? "#000" : "#fff";
-                cont.innerHTML += `<div class="p-5 rounded-2xl flex flex-col items-center justify-center font-bold text-xs" style="background:${tint.hex}; color:${txt}"><span>${s.n}</span><span class="opacity-50 text-[10px] font-mono mt-1">${tint.hex}</span></div>`;
+                cont.innerHTML += `<div class="p-5 rounded-2xl flex flex-col items-center justify-center font-bold text-xs shadow-lg" style="background:${tint.hex}; color:${txt}"><span>${s.n}</span><span class="opacity-50 text-[10px] font-mono mt-1">${tint.hex}</span></div>`;
                 scss += `  "${s.n.toLowerCase()}": ( "bg": ${tint.hex}, "text": ${txt} ),\n`;
             });
             scss += ');'; document.getElementById('semOutput').innerText = scss;
@@ -444,18 +454,18 @@
             const bgH = document.getElementById('expBase').value, bg = safeHexToRgb(bgH), hsl = rgbToHsl(bg.r, bg.g, bg.b), res = document.getElementById('expResults'); res.innerHTML = '';
             const hars = [{n:'Komplementär', h:180}, {n:'Triadisch A', h:120}, {n:'Triadisch B', h:240}, {n:'Analog A', h:30}, {n:'Analog B', h:330}];
             hars.forEach(h => {
-                const acc = hslToRgb((hsl.h + h.h) % 360, Math.max(hsl.s, 60), Math.max(hsl.l, 50)), r = getContrast(bg, acc).toFixed(1);
-                res.innerHTML += `<div class="card p-5 flex items-center justify-between border-l-4" style="border-left-color:${acc.hex}"><div><p class="text-[10px] font-bold text-slate-500 uppercase">${h.n}</p><p class="text-sm font-mono">${acc.hex}</p></div><div class="flex items-center space-x-6"><div class="px-4 py-2 rounded font-bold text-xs shadow" style="background:${acc.hex}; color:${getYIQ(acc)>=128?'#000':'#fff'}">BTN</div><div class="text-sm font-bold ${r>=4.5?'text-emerald-400':'text-red-400'}">${r}:1</div></div></div>`;
+                const acc = hslToRgb((hsl.h + h.h) % 360, Math.max(hsl.s, 60), Math.max(hsl.l, 50)), ratio = getContrast(bg, acc).toFixed(1);
+                res.innerHTML += `<div class="card p-5 flex items-center justify-between border-l-4" style="border-left-color:${acc.hex}"><div><p class="text-[10px] font-bold text-slate-500 uppercase">${h.n}</p><p class="text-sm font-mono">${acc.hex}</p></div><div class="flex items-center space-x-6"><div class="px-4 py-2 rounded font-bold text-xs shadow" style="background:${acc.hex}; color:${getYIQ(acc)>=128?'#000':'#fff'}">BTN</div><div class="text-sm font-bold ${ratio>=4.5?'text-emerald-400':'text-red-400'}">${ratio}:1</div></div></div>`;
             });
         }
 
         function setThemeMode(m) { themeMode = m; updateQuiet(); }
         function updateQuiet() {
             const bgH = document.getElementById('quietBase').value, bg = safeHexToRgb(bgH), isD = themeMode === 'dark';
-            document.getElementById('tm-l').classList.toggle('bg-blue-600', !isD); document.getElementById('tm-d').classList.toggle('bg-blue-600', isD);
-            let surf, side, bord, shad, txt = isD ? "#FFF" : "#0F172A";
-            if(isD) { surf = mixColors({r:255,g:255,b:255}, bg, 0.05); side = mixColors({r:0,g:0,b:0}, bg, 0.15); bord = mixColors({r:255,g:255,b:255}, bg, 0.15); shad = mixColors({r:0,g:0,b:0}, bg, 0.40); }
-            else { surf = mixColors({r:0,g:0,b:0}, bg, 0.03); side = mixColors({r:0,g:0,b:0}, bg, 0.08); bord = mixColors({r:0,g:0,b:0}, bg, 0.12); shad = mixColors({r:0,g:0,b:0}, bg, 0.10); }
+            document.getElementById('tm-l').classList.toggle('bg-blue-600', themeMode==='light'); document.getElementById('tm-d').classList.toggle('bg-blue-600', themeMode==='dark');
+            let surf, side, bord, txt = isD ? "#FFF" : "#0F172A";
+            if(isD) { surf = mixColors({r:255,g:255,b:255}, bg, 0.05); side = mixColors({r:0,g:0,b:0}, bg, 0.15); bord = mixColors({r:255,g:255,b:255}, bg, 0.15); }
+            else { surf = mixColors({r:0,g:0,b:0}, bg, 0.03); side = mixColors({r:0,g:0,b:0}, bg, 0.08); bord = mixColors({r:0,g:0,b:0}, bg, 0.12); }
             const p = document.getElementById('uiPreview'); p.style.backgroundColor = bgH; p.style.color = txt; p.style.borderColor = bord.hex;
             document.getElementById('uiSidebar').style.backgroundColor = side.hex; document.getElementById('uiSidebar').style.borderColor = bord.hex;
             document.getElementById('uiContent').style.backgroundColor = surf.hex; document.getElementById('uiContent').style.borderColor = bord.hex;
@@ -486,7 +496,7 @@
             const ns = ['4xl','3xl','2xl','xl','lg','base','sm','xs'];
             ns.forEach((n,i) => {
                 const s = (b * Math.pow(r, 4-i)).toFixed(2);
-                prev.innerHTML += `<div class="flex items-baseline"><span class="w-12 text-[10px] font-black opacity-40">${n}</span><span style="font-size:${s}px" class="font-bold truncate">Interface Typography</span><span class="ml-auto opacity-30 text-[10px]">${s}px</span></div>`;
+                prev.innerHTML += `<div class="flex items-baseline"><span class="w-12 text-[10px] font-black opacity-40 uppercase">${n}</span><span style="font-size:${s}px" class="font-bold truncate">Interface Typography</span><span class="ml-auto opacity-30 text-[10px]">${s}px</span></div>`;
                 scss += `  "${n}": ${s}px,\n`;
             });
             scss += ');'; document.getElementById('typoOutput').innerText = scss;
@@ -502,7 +512,7 @@
         }
 
         window.onload = () => {
-            updateMix(); updateContrast(); setRuleMode('dark'); updateSemantic(); setScaleType('mono'); updateExplorer(); setThemeMode('dark'); updateGlass(); updateGradient(); updateTypo(); updateShadow();
+            updateMix(); updateContrast(); updateRule(); updateSemantic(); updateScale(); updateExplorer(); updateQuiet(); updateGlass(); updateGradient(); updateTypo(); updateShadow();
         };
     </script>
 </body>
