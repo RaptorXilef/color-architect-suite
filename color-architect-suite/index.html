@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Felix Maywald / RaptorXilef">
-    <meta name="copyright" content="© [2025] Felixx Maywald">
+    <meta name="copyright" content="© [2025] Felix Maywald">
     <!-- Quelle (GitHub-Repository) -->
     <!-- Quelle: https://github.com/RaptorXilef/color-architect-suite -->
     <title>Color Architect Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Fira+Code:wght@400;500&display=swap');
-
+        
         :root {
             --panel-bg: #1e293b;
             --app-bg: #0f172a;
@@ -20,12 +20,12 @@
 
         body { background-color: var(--app-bg); color: #f8fafc; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
         .card { background: var(--panel-bg); border: 1px solid #334155; border-radius: 1.25rem; box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
-
+        
         /* Custom Inputs */
         input[type="color"] { -webkit-appearance: none; border: none; width: 100%; height: 50px; cursor: pointer; border-radius: 0.75rem; background: #334155; padding: 4px; }
         input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
         input[type="color"]::-webkit-color-swatch { border: none; border-radius: 0.5rem; }
-
+        
         input[type="text"], input[type="number"], select { background: #0f172a; border: 1px solid #334155; padding: 0.75rem; border-radius: 0.75rem; color: white; width: 100%; text-align: center; font-family: 'Fira Code', monospace; font-size: 0.875rem; outline: none; }
         input:focus { border-color: var(--accent); }
 
@@ -41,10 +41,16 @@
         .custom-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: var(--accent); cursor: pointer; border-radius: 50%; border: 3px solid #f8fafc; }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
-
+        
         /* Animations */
         .tab-panel { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Grid for Glass Preview */
+        .glass-bg-pattern {
+            background-image: radial-gradient(circle at 2px 2px, #334155 1px, transparent 0);
+            background-size: 24px 24px;
+        }
     </style>
 </head>
 <body class="p-4 md:p-12 flex flex-col items-center">
@@ -52,8 +58,8 @@
     <div class="max-w-6xl w-full">
         <!-- Header -->
         <header class="mb-12 text-center">
-            <h1 class="text-5xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-500 to-emerald-400">
-                COLOR ARCHITECT SUITE
+            <h1 class="text-5xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-500 to-emerald-400 uppercase">
+                Color Architect Suite
             </h1>
             <p class="text-slate-400 mt-4 text-lg font-medium">Design-Engineering für Perfektionisten</p>
         </header>
@@ -67,7 +73,8 @@
                 <button onclick="showTab('semantic')" id="tab-semantic" class="tab-btn">UI Semantics</button>
                 <button onclick="showTab('scale')" id="tab-scale" class="tab-btn">Scale Pro</button>
                 <button onclick="showTab('explorer')" id="tab-explorer" class="tab-btn">Explorer</button>
-                <button onclick="showTab('quiet')" id="tab-quiet" class="tab-btn text-emerald-400">Theme Architect</button>
+                <button onclick="showTab('quiet')" id="tab-quiet" class="tab-btn">Theme Architect</button>
+                <button onclick="showTab('glass')" id="tab-glass" class="tab-btn text-emerald-400">Glass Architect</button>
             </nav>
         </div>
 
@@ -121,7 +128,7 @@
                     </div>
                     <div class="card overflow-hidden flex flex-col shadow-2xl">
                         <div id="conPreview" class="flex-grow p-16 flex flex-col items-center justify-center text-center transition-all duration-500">
-                            <h3 id="conPreviewText" class="text-4xl font-black mb-4 tracking-tighter uppercase">Vorschau</h3>
+                            <h3 id="conPreviewText" class="text-4xl font-black mb-4 tracking-tighter uppercase text-white">Vorschau</h3>
                             <p id="ratioRes" class="text-xl font-mono font-bold"></p>
                         </div>
                         <div id="wcagBadge" class="p-4 text-center text-xs font-black uppercase tracking-widest text-white">Check...</div>
@@ -136,7 +143,7 @@
                         <h2 class="text-2xl font-bold">📐 Prozeduraler Designer</h2>
                         <div class="flex p-1.5 bg-slate-900 rounded-xl border border-slate-700">
                             <button onclick="setRuleMode('light')" id="rule-l" class="px-6 py-2 text-[11px] font-black rounded-lg uppercase transition-all">Light</button>
-                            <button onclick="setRuleMode('dark')" id="rule-d" class="px-6 py-2 text-[11px] font-black rounded-lg uppercase transition-all ml-2">Dark</button>
+                            <button onclick="setRuleMode('dark')" id="rule-d" class="px-6 py-2 text-[11px] font-black rounded-lg uppercase transition-all ml-2 bg-blue-600">Dark</button>
                         </div>
                     </div>
                     <div class="grid md:grid-cols-3 gap-12">
@@ -177,7 +184,7 @@
                     <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
                         <h2 class="text-2xl font-bold">🪜 Scale Pro</h2>
                         <div class="flex p-1.5 bg-slate-900 rounded-xl border border-slate-700">
-                            <button onclick="setScaleType('mono')" id="sc-mono" class="px-5 py-2 text-[10px] font-black rounded-lg uppercase">Monochrom</button>
+                            <button onclick="setScaleType('mono')" id="sc-mono" class="px-5 py-2 text-[10px] font-black rounded-lg uppercase bg-blue-600">Monochrom</button>
                             <button onclick="setScaleType('duo')" id="sc-duo" class="px-5 py-2 text-[10px] font-black rounded-lg uppercase ml-2">Duo-Gradient</button>
                         </div>
                     </div>
@@ -207,7 +214,7 @@
                 </div>
             </div>
 
-            <!-- 7. THEME ARCHITECT (Atmospheric / UI Generator) -->
+            <!-- 7. THEME ARCHITECT -->
             <div id="panel-quiet" class="tab-panel hidden">
                 <div class="grid md:grid-cols-3 gap-8">
                     <div class="card p-10 border-emerald-500/20">
@@ -217,7 +224,7 @@
                                 <label class="block text-[11px] font-black uppercase text-slate-500 mb-3 tracking-widest">Hauptfarbe (Basis)</label>
                                 <input type="color" id="quietBase" value="#0A192F" oninput="updateQuiet();">
                             </div>
-                            <div class="flex p-1.5 bg-slate-900 rounded-xl border border-slate-700">
+                            <div class="flex p-1.5 bg-slate-900 rounded-xl border border-slate-800">
                                 <button onclick="setThemeMode('light')" id="tm-l" class="flex-1 py-2 text-[10px] font-black rounded-lg uppercase">Light</button>
                                 <button onclick="setThemeMode('dark')" id="tm-d" class="flex-1 py-2 text-[10px] font-black rounded-lg uppercase ml-2 bg-blue-600">Dark</button>
                             </div>
@@ -232,7 +239,7 @@
                             </div>
                             <div id="uiContent" class="flex-1 rounded-2xl p-6 border transition-all duration-500 relative">
                                 <h4 class="font-bold text-lg mb-4">UI Preview</h4>
-                                <div class="w-full h-24 rounded-xl mb-4 bg-current opacity-5"></div>
+                                <div class="w-full h-24 rounded-xl mb-4 bg-current opacity-5 border border-current"></div>
                             </div>
                         </div>
                         <div class="code-block text-emerald-300">
@@ -243,12 +250,52 @@
                 </div>
             </div>
 
+            <!-- 8. GLASS ARCHITECT (NEW) -->
+            <div id="panel-glass" class="tab-panel hidden">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="card p-10">
+                        <h2 class="text-2xl font-bold text-emerald-400 mb-8">💎 Glass Architect</h2>
+                        <div class="space-y-8">
+                            <div>
+                                <label class="block text-[11px] font-black uppercase text-slate-500 mb-3 tracking-widest">Hintergrund-Kontext</label>
+                                <input type="color" id="glassBg" value="#0f172a" oninput="updateGlass();">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase tracking-tighter">Deckkraft: <span id="glassOpacityVal">20%</span></label>
+                                <input type="range" id="glassOpacity" min="5" max="60" step="5" value="20" oninput="updateGlass();" class="custom-range">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase tracking-tighter">Blur (Weichzeichnung): <span id="glassBlurVal">12px</span></label>
+                                <input type="range" id="glassBlur" min="0" max="40" step="1" value="12" oninput="updateGlass();" class="custom-range">
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed italic border-t border-slate-700 pt-6">
+                                Berechnet die ideale Rahmenfarbe (Border Tint) durch mathematisches Mischen des Hintergrunds mit Weiß.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2 space-y-8">
+                        <!-- GLASS PREVIEW -->
+                        <div class="rounded-3xl p-16 glass-bg-pattern flex items-center justify-center relative overflow-hidden border border-slate-800 shadow-2xl" style="min-height: 350px;">
+                            <div id="glassPreviewPane" class="w-full max-w-sm p-8 rounded-3xl border transition-all duration-300 flex flex-col items-center">
+                                <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-emerald-400 to-blue-500 mb-6 shadow-lg"></div>
+                                <h4 class="text-xl font-black tracking-tight mb-2">Frosted Glass</h4>
+                                <p class="text-xs opacity-60 text-center leading-relaxed">Mathematisch korrekte Reflektion und Rahmenfarbe.</p>
+                            </div>
+                        </div>
+                        <div class="code-block text-emerald-300">
+                            <button class="copy-btn" onclick="copyContent(event, 'glassOutput')">Copy CSS</button>
+                            <pre id="glassOutput" class="text-xs"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
         // --- GLOBALS ---
-        let ruleMode = 'light';
+        let ruleMode = 'dark';
         let scaleType = 'mono';
         let themeMode = 'dark';
 
@@ -338,7 +385,7 @@
                 document.getElementById('conPreviewText').style.color = txtHex;
                 document.getElementById('ratioRes').innerText = `${ratio} : 1`;
                 const badge = document.getElementById('wcagBadge');
-                if (ratio >= 7) {badge.innerText = "AAA - BESTANDEN";}
+                if (ratio >= 7) {badge.innerText = "AAA - EXZELLENT";}
                 else if (ratio >= 4.5) {badge.innerText = "AA - BESTANDEN";}
                 else {badge.innerText = "KRITISCH";}
                 badge.style.backgroundColor = ratio >= 4.5 ? "#10b981" : "#ef4444";
@@ -465,9 +512,46 @@ $theme-text:    ${txt};`;
             }
         }
 
+        // --- NEW: GLASS ARCHITECT ---
+        function updateGlass() {
+            const bgHex = document.getElementById('glassBg').value;
+            const op = document.getElementById('glassOpacity').value / 100;
+            const blur = document.getElementById('glassBlur').value;
+            const bg = hexToRgb(bgHex);
+            
+            document.getElementById('glassOpacityVal').innerText = (op*100) + "%";
+            document.getElementById('glassBlurVal').innerText = blur + "px";
+
+            const isLight = getYIQ(bg) >= 128;
+            
+            // Border Tint: Mix background with white/black to get harmonious border
+            const tintBase = isLight ? {r:0,g:0,b:0} : {r:255,g:255,b:255};
+            const borderRgb = mix(bg, tintBase, 0.7); // 30% white/black tint
+            const borderRgba = `rgba(${borderRgb.r}, ${borderRgb.g}, ${borderRgb.b}, 0.4)`;
+            
+            const paneRgba = isLight ? `rgba(255, 255, 255, ${op})` : `rgba(15, 23, 42, ${op})`;
+            const text = isLight ? "#000" : "#fff";
+
+            const pane = document.getElementById('glassPreviewPane');
+            pane.style.background = paneRgba;
+            pane.style.backdropFilter = `blur(${blur}px)`;
+            pane.style.borderColor = borderRgba;
+            pane.style.color = text;
+
+            document.getElementById('glassOutput').innerText = 
+`.glass-card {
+  background: ${paneRgba};
+  backdrop-filter: blur(${blur}px);
+  -webkit-backdrop-filter: blur(${blur}px);
+  border: 1px solid ${borderRgba};
+  border-radius: 24px;
+  color: ${text};
+}`;
+        }
+
         // --- INIT ---
         window.onload = () => {
-            updateMix(); updateContrast(); updateRule(); updateSemantic(); updateScale(); updateExplorer(); updateQuiet();
+            updateMix(); updateContrast(); setRuleMode('dark'); updateSemantic(); setScaleType('mono'); updateExplorer(); setThemeMode('dark'); updateGlass();
         };
     </script>
 </body>
